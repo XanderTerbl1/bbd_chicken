@@ -5,7 +5,7 @@ window.addEventListener('load', function () {
     main.addBlock(new MoveFoward());
 
     // If Block
-    let ifBlock = new IfBlock(new TrueConditional())
+    let ifBlock = new IfBlock(new FalseConditional())
     ifBlock.programBlock.addBlock(new MoveFoward())
     main.addBlock(ifBlock);    
     updateHtmlView();
@@ -21,6 +21,16 @@ function updateHtmlView() {
     document.getElementById("main-program").innerHTML = "";
     document.getElementById("main-program").appendChild(main.makeHtml());
 }
+
+// simulate sleep (sync) - used to delay code execution
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+      if ((new Date().getTime() - start) > milliseconds){
+        break;
+      }
+    }
+  }
 
 // get autoincrementing id  
 var getBlockId = (function () {
@@ -38,10 +48,10 @@ class Block {
         template.innerHTML = htmlStr;
         return template.content.childNodes;
     }
-
+    
     // virtual functions               
-    // run() {}
-    // makeHtml() {}
+    run() {}
+    makeHtml() {}
 }
 
 class ProgramBlock extends Block {
@@ -122,8 +132,6 @@ class IfElseBlock extends Block {
     }
 }
 
-
-// class NoObstacleConditional  {
 class TrueConditional extends Block {
     makeHtml() { 
         let html = document.createElement("span");   
@@ -139,6 +147,21 @@ class TrueConditional extends Block {
     }
 }
 
+class FalseConditional extends Block {
+    makeHtml() { 
+        let html = document.createElement("span");   
+        html.setAttribute("id", `block-${this.id}`); 
+        html.setAttribute("class", `block conditional-block`);
+        html.textContent = "FALSE"
+        return html;
+    }
+
+    run() {
+        console.log("running false: " + this.id);
+        return false;
+    }
+}
+
 class MoveFoward extends Block {
     makeHtml() { 
         let html = document.createElement("div");   
@@ -150,14 +173,15 @@ class MoveFoward extends Block {
 
     run() {
         console.log("running move forward: " + this.id);
-        // TODO
-        // Interact with game engine and move player forward
+        player.movePlayer(1);
     }
 }
 
-
 // TODO
-// Find a block by id.
+function findBlockById(block_id){
+    main.find()
+}
+
 // Adding a block using an id.
 // Remove block by id.
 

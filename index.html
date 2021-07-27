@@ -1,38 +1,68 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BBD Chicks</title>  
+  <title>BBD Chicks</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <style>
-  #main-program{
+  #main-program {
     background-color: #FAFAFA;
     border: 1px solid black;
     padding: 10px;
     width: 40%
   }
 
-  .block{
+  .block {
     padding: 5px 10px;
   }
 
-  .if-block > .program-block{
+  .if-block>.program-block {
     margin-left: 10px;
   }
-  
-  /* Add more styling...  */  
 
+
+
+
+  /* Temp game styles */
+  #game-board {}
+
+  .game-tile {
+    position: relative;
+    outline: 1px #000 solid;
+    background: #f8ffde;
+    display: inline-block;
+  }
+
+  .center-tile {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .player {
+    height: 20px;
+    width: 20px;
+    background-color: red;
+    border-radius: 20px;
+  }
 </style>
 
 <body>
-    <button onclick="runSolution()">Run Solution</button>
-    <button onclick="tempAddMoveForward()">Add move forward</button>
-    <div id="main-program">
-    </div>    
+  <button onclick="runSolution()">Run Solution</button>
+  <button onclick="tempAddMoveForward()">Add move forward</button>
+  <div id="main-program">
+  </div>
+  <div id="game-board">
+  </div>
 </body>
+
+<script src="js/game.js"></script>
 <script src="js/codeblocks.js"></script>
+
 </html>
