@@ -3,17 +3,18 @@ window.addEventListener('load', function () {
     main = new ProgramBlock();
 
     main.addBlock(new MoveFoward());
+    main.addBlock(new MoveFoward());
     
-    let funcDefBlock = new FunctionDefinitionBlock("myFunc");
-    funcDefBlock.programBlock.addBlock(new MoveFoward());
-    funcDefBlock.programBlock.addBlock(new MoveFoward());
-    main.addBlock(funcDefBlock);
-    let ifElseBlock = new IfElseBlock(new FalseConditional);
-    ifElseBlock.trueProgramBlock.addBlock(new MoveFoward());
-    ifElseBlock.falseProgramBlock.addBlock(new MoveFoward());
-    main.addBlock(ifElseBlock);
-    let funcCallBlock = new FunctionCallBlock("myFunc");
-    main.addBlock(funcCallBlock);
+    // let funcDefBlock = new FunctionDefinitionBlock("myFunc");
+    // funcDefBlock.programBlock.addBlock(new MoveFoward());
+    // funcDefBlock.programBlock.addBlock(new MoveFoward());
+    // main.addBlock(funcDefBlock);
+    // let ifElseBlock = new IfElseBlock(new FalseConditional);
+    // ifElseBlock.trueProgramBlock.addBlock(new MoveFoward());
+    // ifElseBlock.falseProgramBlock.addBlock(new MoveFoward());
+    // main.addBlock(ifElseBlock);
+    // let funcCallBlock = new FunctionCallBlock("myFunc");
+    // main.addBlock(funcCallBlock);
 
     // If Block
     let ifBlock = new IfBlock(new FalseConditional())
