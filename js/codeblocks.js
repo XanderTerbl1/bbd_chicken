@@ -1,7 +1,7 @@
 window.addEventListener('load', function () {
     let main = new ProgramBlock();
     main.addBlock(new FunctionDefinition("sco"));
-    main.addBlock(new FunctionCall("scdfso"));
+    main.addBlock(new FunctionCall("sco"));
 
     // Running
     main.run();
