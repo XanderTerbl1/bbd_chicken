@@ -334,21 +334,6 @@ class FunctionCallBlock extends Block {
     }
 }
 
-class FalseConditional extends Block {
-    makeHtml() {
-        let html = document.createElement("span");
-        html.setAttribute("id", `block-${this.id}`);
-        html.setAttribute("class", `block conditional-block`);
-        html.textContent = "FALSE"
-        return html;
-    }
-
-    run() {
-        console.log("running false: " + this.id);
-        return false;
-    }
-}
-
 class MoveFoward extends Block {
     makeHtml() {
         let html = document.createElement("div");
