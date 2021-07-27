@@ -3,9 +3,7 @@ window.addEventListener('load', function () {
     main = new ProgramBlock();
 
     main.addBlock(new MoveFoward());
-    let ifBlock = new IfBlock(new TrueConditional);
-    ifBlock.programBlock.addBlock(new MoveFoward());
-    main.addBlock(ifBlock);
+    
     let funcDefBlock = new FunctionDefinitionBlock("myFunc");
     funcDefBlock.programBlock.addBlock(new MoveFoward());
     funcDefBlock.programBlock.addBlock(new MoveFoward());
