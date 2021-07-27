@@ -1,13 +1,22 @@
 let main;
 window.addEventListener('load', function () {
     main = new ProgramBlock();
-    main.addBlock(new MoveFoward());
-    main.addBlock(new MoveFoward());
 
-    // If Block
-    let ifBlock = new IfBlock(new TrueConditional())
-    ifBlock.programBlock.addBlock(new MoveFoward())
-    main.addBlock(ifBlock);    
+    main.addBlock(new MoveFoward());
+    let ifBlock = new IfBlock(new TrueConditional);
+    ifBlock.programBlock.addBlock(new MoveFoward());
+    main.addBlock(ifBlock);
+    let funcDefBlock = new FunctionDefinitionBlock("myFunc");
+    funcDefBlock.programBlock.addBlock(new MoveFoward());
+    funcDefBlock.programBlock.addBlock(new MoveFoward());
+    main.addBlock(funcDefBlock);
+    let ifElseBlock = new IfElseBlock(new TrueConditional);
+    ifElseBlock.trueProgramBlock.addBlock(new MoveFoward());
+    ifElseBlock.falseProgramBlock.addBlock(new MoveFoward());
+    main.addBlock(ifElseBlock);
+    let funcCallBlock = new FunctionCallBlock("myFunc");
+    main.addBlock(funcCallBlock);
+
     updateHtmlView();
 })
 
@@ -57,6 +66,20 @@ class ProgramBlock extends Block {
         });
     }
 
+    find(id) {
+        console.log("searching program: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        for (let b of this.blocks) {
+            let found = b.find(id);
+            if (found !== null) {
+                return found;
+            }
+        }
+        return null;
+    }
+
     makeHtml() {
         let html = document.createElement("div"); 
         html.setAttribute("id", `block-${this.id}`);
@@ -98,6 +121,24 @@ class IfBlock extends Block {
             this.programBlock.run();
         }
     }
+
+    find(id) {
+        console.log("searching if: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+
+        let found = this.conditionalBlock.find(id);
+        if (found !== null) {
+            return found;
+        }
+        found = this.programBlock.find(id);
+        if (found !== null) {
+            return found;
+        }
+
+        return null;
+    }
 }
 
 class IfElseBlock extends Block {
@@ -109,7 +150,19 @@ class IfElseBlock extends Block {
     }
 
     makeHtml() {
-        return "<div>if  " + this.conditionalBlock.makeHtml() + this.trueProgramBlock.makeHtml() + "else  "  + this.falseProgramBlock.makeHtml() + "</div>"
+        let html = document.createElement("div"); 
+        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("class", `block if-else-block`);
+    
+        html.textContent = "IF "
+        html.appendChild(this.conditionalBlock.makeHtml())  
+        html.appendChild(this.trueProgramBlock.makeHtml())
+
+        let elseDiv = document.createElement("div");
+        elseDiv.textContent = "ELSE "
+        html.appendChild(elseDiv);
+        html.appendChild(this.falseProgramBlock.makeHtml()) 
+        return html;  
     }
 
     run() {
@@ -120,10 +173,60 @@ class IfElseBlock extends Block {
             this.falseProgramBlock.run();
         }
     }
+
+    find(id) {
+        console.log("searching if/else: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+
+        let found = this.conditionalBlock.find(id);
+        if (found !== null) {
+            return found;
+        }
+        found = this.trueProgramBlock.find(id);
+        if (found !== null) {
+            return found;
+        }
+        found = this.falseProgramBlock.find(id);
+        if (found !== null) {
+            return found;
+        }
+
+        return null;
+    }
 }
 
 
+// class WhileBlock extends Block {
+//     constructor(conditionalBlock) {
+//         super();
+//         this.conditionalBlock = conditionalBlock;
+//         this.programBlock = new ProgramBlock();
+//     }
+
+//     makeHtml() {
+//         let html = document.createElement("div"); 
+//         html.setAttribute("id", `block-${this.id}`);
+//         html.setAttribute("class", `block while-block`);
+    
+//         html.textContent = "WHILE "
+//         html.appendChild(this.conditionalBlock.makeHtml())        
+//         html.appendChild(this.programBlock.makeHtml()) 
+//         return html;               
+//     }
+
+//     run() {
+//         console.log("running  while: " + this.id);
+//         while (this.conditionalBlock.run()) {
+//             this.programBlock.run();
+//         }
+//     }
+// }
+
+
 // class NoObstacleConditional  {
+
 class TrueConditional extends Block {
     makeHtml() { 
         let html = document.createElement("span");   
@@ -136,6 +239,74 @@ class TrueConditional extends Block {
     run() {
         console.log("running  true: " + this.id);
         return true;
+    }
+
+    find(id) {
+        console.log("searching cond: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
+
+let funcs = {}
+class FunctionDefinitionBlock extends Block {
+    constructor(funcName) {
+        super();
+        this.funcName = funcName;
+        this.programBlock = new ProgramBlock();
+    }
+
+    makeHtml() { 
+        let html = document.createElement("div");
+        html.setAttribute("id", `block-${this.id}`)
+        html.setAttribute("class", `block function-def-block`)
+        html.textContent = "NEW FUNCTION " + this.funcName
+        html.appendChild(this.programBlock.makeHtml())
+        return html;   
+    }
+    run() {
+        console.log("running  function def: " + this.id)
+        funcs[this.funcName] = this.programBlock;//null error check required
+    }
+
+    find(id) {
+        console.log("searching func def: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        let found = this.programBlock.find(id);
+        if (found !== null) {
+            return found;
+        }
+        return null;
+    }
+}
+
+class FunctionCallBlock extends Block {
+    constructor(funcName) {
+        super();
+        this.funcName = funcName;
+    }
+
+    makeHtml() { 
+        let html = document.createElement("div")
+        html.setAttribute("id", `block-${this.id}`)
+        html.setAttribute("class", `block function-call-block`)
+        html.textContent = "EXECUTE FUNCTION " + this.funcName
+        return html; 
+    }
+    run() {
+        console.log("running  function call: " + this.id)
+        funcs[this.funcName].run();
+    }
+    find(id) {
+        console.log("searching func call: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        return null;
     }
 }
 
@@ -153,6 +324,14 @@ class MoveFoward extends Block {
         // TODO
         // Interact with game engine and move player forward
     }
+
+    find(id) {
+        console.log("searching move fwd: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
 }
 
 
@@ -163,8 +342,10 @@ class MoveFoward extends Block {
 
 
 function tempAddMoveForward(){
-    main.addBlock(new MoveFoward());
-    updateHtmlView();
+    // main.addBlock(new MoveFoward());
+    // updateHtmlView();
+    let b = main.find(17);
+    console.log(b)
 }
 
 
