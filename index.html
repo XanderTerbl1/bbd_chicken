@@ -10,7 +10,9 @@
 </head>
 
 <style>
-  #main-program {
+  .controls-overlay {
+    position: absolute;
+    right: 0;
     background-color: #FAFAFA;
     border: 1px solid black;
     padding: 10px;
@@ -34,6 +36,16 @@
   }
 
   /* Temp game styles */
+  #overlays {
+    padding: 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+  }
+
   #game-board {}
 
   .game-tile {
@@ -59,9 +71,13 @@
 </style>
 
 <body>
-  <button onclick="runSolution()">Run Solution</button>
-  <button onclick="tempAddMoveForward()">Add move forward</button>
-  <div id="main-program">
+  <div id="overlays">
+    <div class="controls-overlay">
+      <button onclick="runSolution()">Run Solution</button>
+      <button onclick="tempAddMoveForward()">Add move forward</button>
+      <div id="main-program">
+      </div>
+    </div>
   </div>
   <div id="game-board">
   </div>
