@@ -200,7 +200,6 @@ class IfElseBlock extends Block {
     }
 }
 
-
 // class WhileBlock extends Block {
 //     constructor(conditionalBlock) {
 //         super();
@@ -226,8 +225,6 @@ class IfElseBlock extends Block {
 //         }
 //     }
 // }
-
-
 
 class TrueConditional extends Block {
     makeHtml() {
@@ -358,6 +355,27 @@ class MoveFoward extends Block {
     }
 }
 
+class BlankConditionalBlock extends Block {
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("class", `block blank-block`);
+        html.textContent = "...";
+        return html;
+    }
+
+    run() {
+        console.log("running blank: " + this.id);
+    }
+
+    find(id) {
+        console.log("searching blank: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
 
 function addToProgramBlock(id, block) {
     let parent = main.find(id);
@@ -367,29 +385,34 @@ function addToProgramBlock(id, block) {
 
 function updateConditionalBlock(id, block) {
     let parent = main.find(id);
-    console.log(parent)
     parent.conditionalBlock = block;
-    console.log(parent)
     updateHtmlView();
 }
 
-// TODO
-// Remove block by id.
+function removeConditionalBlock(id) {
+    let parent = main.find(id);
+    parent.conditionalBlock = new BlankConditionalBlock();
+    updateHtmlView();
+}
+
+function removeProgBlock(id, parentID) {
+    let parent = main.find(parentID);
+    parent.blocks.splice(parent.blocks.indexOf(main.find(id)), 1);
+    updateHtmlView();
+}
 
 
 function tempAddMoveForward(){
-    // main.addBlock(new MoveFoward());
-    // updateHtmlView();
+    main.addBlock(new MoveFoward());
+    updateHtmlView();
 
     // let b = main.find(17);
     // console.log(b)
 
-    let ifb = new IfBlock(new TrueConditional);
-    ifb.programBlock.addBlock(new MoveFoward());
-    addToProgramBlock(14, ifb);
+    // addToProgramBlock(14, new MoveFoward());
+    // updateConditionalBlock(12, new TrueConditional());
 
-    updateConditionalBlock(12, new TrueConditional());
-    
+    // removeConditionalBlock(8);
+    // removeProgBlock(8,1);
+   
 }
-
-
