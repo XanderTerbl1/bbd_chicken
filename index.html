@@ -8,10 +8,31 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 
+<style>
+  #main-program{
+    background-color: #FAFAFA;
+    border: 1px solid black;
+    padding: 10px;
+    width: 40%
+  }
+
+  .block{
+    padding: 5px 10px;
+  }
+
+  .if-block > .program-block{
+    margin-left: 10px;
+  }
+  
+  /* Add more styling...  */  
+
+</style>
+
 <body>
-    <div>
-        Hello again, World!
-    </div>
+    <button onclick="runSolution()">Run Solution</button>
+    <button onclick="tempAddMoveForward()">Add move forward</button>
+    <div id="main-program">
+    </div>    
 </body>
 <script src="js/codeblocks.js"></script>
 </html>
