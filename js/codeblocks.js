@@ -10,7 +10,7 @@ window.addEventListener('load', function () {
     funcDefBlock.programBlock.addBlock(new MoveFoward());
     funcDefBlock.programBlock.addBlock(new MoveFoward());
     main.addBlock(funcDefBlock);
-    let ifElseBlock = new IfElseBlock(new TrueConditional);
+    let ifElseBlock = new IfElseBlock(new FalseConditional);
     ifElseBlock.trueProgramBlock.addBlock(new MoveFoward());
     ifElseBlock.falseProgramBlock.addBlock(new MoveFoward());
     main.addBlock(ifElseBlock);
@@ -250,7 +250,30 @@ class TrueConditional extends Block {
     }
 }
 
-let funcs = {}
+class FalseConditional extends Block {
+    makeHtml() { 
+        let html = document.createElement("span");   
+        html.setAttribute("id", `block-${this.id}`); 
+        html.setAttribute("class", `block conditional-block`);
+        html.textContent = "FALSE"
+        return html;
+    }
+
+    run() {
+        console.log("running  false: " + this.id);
+        return false;
+    }
+
+    find(id) {
+        console.log("searching cond: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
+
+let funcs = {};
 class FunctionDefinitionBlock extends Block {
     constructor(funcName) {
         super();
@@ -335,17 +358,37 @@ class MoveFoward extends Block {
 }
 
 
+function addToProgramBlock(id, block) {
+    let parent = main.find(id);
+    parent.addBlock(block);
+    updateHtmlView();
+}
+
+function updateConditionalBlock(id, block) {
+    let parent = main.find(id);
+    console.log(parent)
+    parent.conditionalBlock = block;
+    console.log(parent)
+    updateHtmlView();
+}
+
 // TODO
-// Find a block by id.
-// Adding a block using an id.
 // Remove block by id.
 
 
 function tempAddMoveForward(){
     // main.addBlock(new MoveFoward());
     // updateHtmlView();
-    let b = main.find(17);
-    console.log(b)
+    
+    // let b = main.find(17);
+    // console.log(b)
+
+    let ifb = new IfBlock(new TrueConditional);
+    ifb.programBlock.addBlock(new MoveFoward());
+    addToProgramBlock(14, ifb);
+
+    updateConditionalBlock(12, new TrueConditional());
+    
 }
 
 
