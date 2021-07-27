@@ -100,6 +100,30 @@ class IfBlock extends Block {
     }
 }
 
+class IfElseBlock extends Block {
+    constructor(conditionalBlock) {
+        super();
+        this.conditionalBlock = conditionalBlock;
+        this.trueProgramBlock = new ProgramBlock();
+        this.falseProgramBlock = new ProgramBlock();
+    }
+
+    makeHtml() {
+        return "<div>if  " + this.conditionalBlock.makeHtml() + this.trueProgramBlock.makeHtml() + "else  "  + this.falseProgramBlock.makeHtml() + "</div>"
+    }
+
+    run() {
+        console.log("running  if else: " + this.id);
+        if (this.conditionalBlock.run()) {
+            this.trueProgramBlock.run();
+        } else {
+            this.falseProgramBlock.run();
+        }
+    }
+}
+
+
+// class NoObstacleConditional  {
 class TrueConditional extends Block {
     makeHtml() { 
         let html = document.createElement("span");   
