@@ -1,16 +1,31 @@
+let main;
 window.addEventListener('load', function () {
-    let main = new ProgramBlock();
-    main.addBlock(new IfBlock(new FalseConditional()))
+    main = new ProgramBlock();
+    main.addBlock(new MoveFoward());
+    main.addBlock(new MoveFoward());
 
-    // Running
-    main.run();
-    main.makeHtml();
+    // If Block
+    let ifBlock = new IfBlock(new TrueConditional())
+    ifBlock.programBlock.addBlock(new MoveFoward())
+    main.addBlock(ifBlock);    
+    updateHtmlView();
 })
 
-// IIFE
+// Runs the solution recursivley
+function runSolution(){
+    main.run();
+}
+
+// Update HTML content to reflect the current contents of "main"
+function updateHtmlView() {    
+    document.getElementById("main-program").innerHTML = "";
+    document.getElementById("main-program").appendChild(main.makeHtml());
+}
+
+// get autoincrementing id  
 var getBlockId = (function () {
     var i = 1;
-    return function () { return i++;}
+    return function () { return i++; }
 })();
 
 class Block {
@@ -18,9 +33,15 @@ class Block {
         this.id = getBlockId();
     }
 
+    convertToElement(htmlStr) {
+        var template = document.createElement('template');
+        template.innerHTML = htmlStr;
+        return template.content.childNodes;
+    }
+
     // virtual functions               
-    run() { }
-    makeHtml() { return "<div>block</div>" }
+    // run() {}
+    // makeHtml() {}
 }
 
 class ProgramBlock extends Block {
@@ -37,11 +58,14 @@ class ProgramBlock extends Block {
     }
 
     makeHtml() {
-        let html = ""
+        let html = document.createElement("div"); 
+        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("class", `block program-block`);
         this.blocks.forEach(b => {
-            html += b.makeHtml();
+            html.appendChild(b.makeHtml());
         });
-        return html;
+
+        return html;   
     }
 
     // block-specific methods
@@ -58,7 +82,14 @@ class IfBlock extends Block {
     }
 
     makeHtml() {
-        return "<div>if  " + this.conditionalBlock.makeHtml() + this.programBlock.makeHtml() + "</div>"
+        let html = document.createElement("div"); 
+        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("class", `block if-block`);
+    
+        html.textContent = "IF "
+        html.appendChild(this.conditionalBlock.makeHtml())        
+        html.appendChild(this.programBlock.makeHtml()) 
+        return html;               
     }
 
     run() {
@@ -69,26 +100,47 @@ class IfBlock extends Block {
     }
 }
 
-// class NoObstacleConditional  {
 class TrueConditional extends Block {
-    makeHtml() { return "<span>TRUE</span>" }
+    makeHtml() { 
+        let html = document.createElement("span");   
+        html.setAttribute("id", `block-${this.id}`); 
+        html.setAttribute("class", `block conditional-block`);
+        html.textContent = "TRUE"
+        return html;
+    }
+
     run() {
         console.log("running  true: " + this.id);
         return true;
     }
 }
 
-class FalseConditional extends Block {
-    makeHtml() { return "<span>FALSE</span>" }
+class MoveFoward extends Block {
+    makeHtml() { 
+        let html = document.createElement("div");   
+        html.setAttribute("id", `block-${this.id}`); 
+        html.setAttribute("class", `block move-block`);
+        html.textContent = "MOVE FORWARD"
+        return html;
+    }
+
     run() {
-        console.log("running  false: " + this.id);
-        return false;
+        console.log("running move forward: " + this.id);
+        // TODO
+        // Interact with game engine and move player forward
     }
 }
 
-class MoveForward extends Block {
-    makeHtml() { return "<span>FALSE</span>" }
-    run() {
-        // call game engine's function to move forward
-    }
+
+// TODO
+// Find a block by id.
+// Adding a block using an id.
+// Remove block by id.
+
+
+function tempAddMoveForward(){
+    main.addBlock(new MoveFoward());
+    updateHtmlView();
 }
+
+
