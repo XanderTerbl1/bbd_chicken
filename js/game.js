@@ -1,5 +1,5 @@
-const BOARD_SIZE = 10 // dimensions 
-const TILE_SIZE = 50 // height & width px
+const BOARD_SIZE = 15 // dimensions 
+const TILE_SIZE = 80 // height & width px
 
 function boardAt(row, col) {
     return document.getElementById(`tile-${row}-${col}`);
@@ -26,7 +26,7 @@ class Player{
     constructor(){
         this.player = document.createElement("div");
         this.player.setAttribute("class", "player center-tile");   
-        this.player_position = [9,4];
+        this.player_position = [14,6];
     }
 
     spawnPlayer(){
@@ -59,9 +59,6 @@ class Player{
         this.spawnPlayer();        
     }
 }
-
-
-
 
 // Initialising
 createGameBoard();
