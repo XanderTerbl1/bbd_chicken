@@ -3,9 +3,7 @@ window.addEventListener('load', function () {
     main = new ProgramBlock();
 
     main.addBlock(new MoveFoward());
-    let ifBlock = new IfBlock(new TrueConditional);
-    ifBlock.programBlock.addBlock(new MoveFoward());
-    main.addBlock(ifBlock);
+    
     let funcDefBlock = new FunctionDefinitionBlock("myFunc");
     funcDefBlock.programBlock.addBlock(new MoveFoward());
     funcDefBlock.programBlock.addBlock(new MoveFoward());
@@ -17,16 +15,20 @@ window.addEventListener('load', function () {
     let funcCallBlock = new FunctionCallBlock("myFunc");
     main.addBlock(funcCallBlock);
 
+    // If Block
+    let ifBlock = new IfBlock(new FalseConditional())
+    ifBlock.programBlock.addBlock(new MoveFoward())
+    main.addBlock(ifBlock);
     updateHtmlView();
 })
 
 // Runs the solution recursivley
-function runSolution(){
+function runSolution() {
     main.run();
 }
 
 // Update HTML content to reflect the current contents of "main"
-function updateHtmlView() {    
+function updateHtmlView() {
     document.getElementById("main-program").innerHTML = "";
     document.getElementById("main-program").appendChild(main.makeHtml());
 }
@@ -49,8 +51,8 @@ class Block {
     }
 
     // virtual functions               
-    // run() {}
-    // makeHtml() {}
+    run() { }
+    makeHtml() { }
 }
 
 class ProgramBlock extends Block {
@@ -81,14 +83,14 @@ class ProgramBlock extends Block {
     }
 
     makeHtml() {
-        let html = document.createElement("div"); 
+        let html = document.createElement("div");
         html.setAttribute("id", `block-${this.id}`);
         html.setAttribute("class", `block program-block`);
         this.blocks.forEach(b => {
             html.appendChild(b.makeHtml());
         });
 
-        return html;   
+        return html;
     }
 
     // block-specific methods
@@ -105,14 +107,14 @@ class IfBlock extends Block {
     }
 
     makeHtml() {
-        let html = document.createElement("div"); 
+        let html = document.createElement("div");
         html.setAttribute("id", `block-${this.id}`);
         html.setAttribute("class", `block if-block`);
-    
+
         html.textContent = "IF "
-        html.appendChild(this.conditionalBlock.makeHtml())        
-        html.appendChild(this.programBlock.makeHtml()) 
-        return html;               
+        html.appendChild(this.conditionalBlock.makeHtml())
+        html.appendChild(this.programBlock.makeHtml())
+        return html;
     }
 
     run() {
@@ -150,19 +152,19 @@ class IfElseBlock extends Block {
     }
 
     makeHtml() {
-        let html = document.createElement("div"); 
+        let html = document.createElement("div");
         html.setAttribute("id", `block-${this.id}`);
         html.setAttribute("class", `block if-else-block`);
-    
+
         html.textContent = "IF "
-        html.appendChild(this.conditionalBlock.makeHtml())  
+        html.appendChild(this.conditionalBlock.makeHtml())
         html.appendChild(this.trueProgramBlock.makeHtml())
 
         let elseDiv = document.createElement("div");
         elseDiv.textContent = "ELSE "
         html.appendChild(elseDiv);
-        html.appendChild(this.falseProgramBlock.makeHtml()) 
-        return html;  
+        html.appendChild(this.falseProgramBlock.makeHtml())
+        return html;
     }
 
     run() {
@@ -206,14 +208,14 @@ class IfElseBlock extends Block {
 //     }
 
 //     makeHtml() {
-//         let html = document.createElement("div"); 
+//         let html = document.createElement("div");
 //         html.setAttribute("id", `block-${this.id}`);
 //         html.setAttribute("class", `block while-block`);
-    
+
 //         html.textContent = "WHILE "
-//         html.appendChild(this.conditionalBlock.makeHtml())        
-//         html.appendChild(this.programBlock.makeHtml()) 
-//         return html;               
+//         html.appendChild(this.conditionalBlock.makeHtml())
+//         html.appendChild(this.programBlock.makeHtml())
+//         return html;
 //     }
 
 //     run() {
@@ -225,12 +227,11 @@ class IfElseBlock extends Block {
 // }
 
 
-// class NoObstacleConditional  {
 
 class TrueConditional extends Block {
-    makeHtml() { 
-        let html = document.createElement("span");   
-        html.setAttribute("id", `block-${this.id}`); 
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("id", `block-${this.id}`);
         html.setAttribute("class", `block conditional-block`);
         html.textContent = "TRUE"
         return html;
@@ -281,13 +282,13 @@ class FunctionDefinitionBlock extends Block {
         this.programBlock = new ProgramBlock();
     }
 
-    makeHtml() { 
+    makeHtml() {
         let html = document.createElement("div");
         html.setAttribute("id", `block-${this.id}`)
         html.setAttribute("class", `block function-def-block`)
         html.textContent = "NEW FUNCTION " + this.funcName
         html.appendChild(this.programBlock.makeHtml())
-        return html;   
+        return html;
     }
     run() {
         console.log("running  function def: " + this.id)
@@ -313,12 +314,12 @@ class FunctionCallBlock extends Block {
         this.funcName = funcName;
     }
 
-    makeHtml() { 
+    makeHtml() {
         let html = document.createElement("div")
         html.setAttribute("id", `block-${this.id}`)
         html.setAttribute("class", `block function-call-block`)
         html.textContent = "EXECUTE FUNCTION " + this.funcName
-        return html; 
+        return html;
     }
     run() {
         console.log("running  function call: " + this.id)
@@ -333,10 +334,25 @@ class FunctionCallBlock extends Block {
     }
 }
 
+class FalseConditional extends Block {
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("class", `block conditional-block`);
+        html.textContent = "FALSE"
+        return html;
+    }
+
+    run() {
+        console.log("running false: " + this.id);
+        return false;
+    }
+}
+
 class MoveFoward extends Block {
-    makeHtml() { 
-        let html = document.createElement("div");   
-        html.setAttribute("id", `block-${this.id}`); 
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("id", `block-${this.id}`);
         html.setAttribute("class", `block move-block`);
         html.textContent = "MOVE FORWARD"
         return html;
@@ -344,8 +360,7 @@ class MoveFoward extends Block {
 
     run() {
         console.log("running move forward: " + this.id);
-        // TODO
-        // Interact with game engine and move player forward
+        player.movePlayer(1);
     }
 
     find(id) {
@@ -379,7 +394,7 @@ function updateConditionalBlock(id, block) {
 function tempAddMoveForward(){
     // main.addBlock(new MoveFoward());
     // updateHtmlView();
-    
+
     // let b = main.find(17);
     // console.log(b)
 
