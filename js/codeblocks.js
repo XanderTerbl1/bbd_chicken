@@ -35,16 +35,6 @@ function updateHtmlView() {
     document.getElementById("main-program").appendChild(main.makeHtml());
 }
 
-// simulate sleep (sync) - used to delay code execution
-function sleep(milliseconds) {
-    var start = new Date().getTime();
-    for (var i = 0; i < 1e7; i++) {
-        if ((new Date().getTime() - start) > milliseconds) {
-            break;
-        }
-    }
-}
-
 // get autoincrementing id  
 var getBlockId = (function () {
     var i = 1;
@@ -239,7 +229,6 @@ class IfElseBlock extends Block {
 // }
 
 
-// class NoObstacleConditional  {
 
 class TrueConditional extends Block {
     makeHtml() {
@@ -361,14 +350,6 @@ class MoveFoward extends Block {
         return null;
     }
 }
-
-// TODO
-function findBlockById(block_id) {
-    main.find()
-}
-
-// Adding a block using an id.
-// Remove block by id.
 
 
 function tempAddMoveForward() {
