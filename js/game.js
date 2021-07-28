@@ -1,3 +1,9 @@
+//Const level params
+const WIDTH = 40;
+const INCREMENT_SPEED = 0.025;
+const TOTAL_LEVELS = 5;
+
+//Renderer
 var canvas = document.getElementById("mywebgl");
 var renderer = new THREE.WebGLRenderer({ canvas: canvas });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -6,87 +12,78 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+//Camera
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 3000);
 camera.position.set(0, -15, 20);
 camera.up = new THREE.Vector3(0, 0, 1);
 camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-//LIGHTS
-var light = new THREE.AmbientLight(0xffffff, 0.5);
+//Lights
+var light = new THREE.AmbientLight(0xffffff, 0.5); //Ambient
 scene.add(light);
-var light2 = new THREE.PointLight(0xffffff, 0.8);
+var light2 = new THREE.PointLight(0xffffff, 0.8); //Directional
 light2.position.set(0, 20, 10);
 light2.castShadow = true;
 light2.shadow.camera.near = 0.1;
 light2.shadow.camera.far = 25;
 scene.add(light2);
 
-// instantiate a loader
-var loader = new THREE.TextureLoader();
+//Add starting and ending strips
+var groundBase = addGrassStrip(0, 0, -10); //Start
+var groundEndBase = addGrassStrip(0, 12, -10); //End
+var topBorder = groundEndBase.position.y + 2;
+function addGrassStrip(x, y, z)
+{
+    var baseTexture = new THREE.TextureLoader().load("images/grass.jpg");
+    var basePlane = new THREE.PlaneBufferGeometry(40, 2);
+    var baseMat = new THREE.MeshPhongMaterial({ color: 0x00FF00, specular: 0x050505, map: baseTexture });
+    var base = new THREE.Mesh(basePlane, baseMat);
+    base.position.x = x;
+    base.position.y = y;
+    base.position.z = z;
+    base.doubleSided = true;
+    base.receiveShadow = true;
+    scene.add(base);
+    return base;
+}
 
-//add Base ground
-var baseTexture = new THREE.TextureLoader().load("images/grass.jpg");
-var groundBasePlane = new THREE.PlaneBufferGeometry(40, 2);
-var groundBaseMat = new THREE.MeshPhongMaterial({ color: 0x00FF00, specular: 0x050505, map: baseTexture });
-var groundBase = new THREE.Mesh(groundBasePlane, groundBaseMat);
-groundBase.position.x = 0;
-groundBase.position.y = 0;
-groundBase.position.z = -10;
-groundBase.doubleSided = true;
-groundBase.receiveShadow = true;
-scene.add(groundBase);
+//Add road
+var groundRoad = addRoad(0, 6, -10)
+var border = WIDTH/2;
+function addRoad(x, y, z)
+{
+    var roadTexture = new THREE.TextureLoader().load("images/road.png");
+    roadTexture.wrapS = THREE.RepeatWrapping;
+    roadTexture.wrapT = THREE.RepeatWrapping;
+    roadTexture.repeat.set(1, 1);
+    var roadPlane = new THREE.PlaneBufferGeometry(40, 10);
+    var roadMat = new THREE.MeshPhongMaterial({ color: 0x404040, specular: 0x050505, map: roadTexture, side: THREE.DoubleSide });
+    var road = new THREE.Mesh(roadPlane, roadMat);
+    road.position.x = x;
+    road.position.y = y;
+    road.position.z = z;
+    road.doubleSided = true;
+    road.receiveShadow = true;
+    scene.add(road);
+    return roadTexture;
+}
 
-//add Road ground
-var roadTexture = new THREE.TextureLoader().load("images/road.png");
-roadTexture.wrapS = THREE.RepeatWrapping;
-roadTexture.wrapT = THREE.RepeatWrapping;
-roadTexture.repeat.set(1, 1);
-var groundRoadPlane = new THREE.PlaneBufferGeometry(40, 10);
-var groundRoadMat = new THREE.MeshPhongMaterial({ color: 0x404040, specular: 0x050505, map: roadTexture, side: THREE.DoubleSide });
-var groundRoad = new THREE.Mesh(groundRoadPlane, groundRoadMat);
-groundRoad.position.x = 0;
-groundRoad.position.y = 6;
-groundRoad.position.z = -10;
-groundRoad.doubleSided = true;
-groundRoad.receiveShadow = true;
-scene.add(groundRoad);
-var border = groundRoadPlane.parameters.width / 2;
-
-//add 2nd Base ground
-var groundEndBasePlane = new THREE.PlaneBufferGeometry(40, 2);
-var groundEndBaseMat = new THREE.MeshPhongMaterial({ color: 0x00FF00, specular: 0x050505, map: baseTexture });
-var groundEndBase = new THREE.Mesh(groundEndBasePlane, groundEndBaseMat);
-groundEndBase.position.x = 0;
-groundEndBase.position.y = 12;
-groundEndBase.position.z = -10;
-groundEndBase.doubleSided = true;
-groundEndBase.receiveShadow = true;
-scene.add(groundEndBase);
-
-var topBorder = groundEndBase.position.y + groundBasePlane.parameters.height;
-
-//add right wall
-var rightWallPlane = new THREE.BoxGeometry(20, 22, 20);
-var rightMat = new THREE.MeshPhongMaterial({ color: 0x000000, specular: 0x050505 });
-var rightWall = new THREE.Mesh(rightWallPlane, rightMat);
-rightWall.rotation.y = -Math.PI / 2;
-rightWall.position.x = 30;
-rightWall.position.y = 11;
-rightWall.position.z = 0;
-rightWall.doubleSided = true;
-scene.add(rightWall);
-
-//add left wall
-var leftWallPane = new THREE.BoxGeometry(20, 22, 20);
-var leftWallMat = new THREE.MeshPhongMaterial({ color: 0x000000, specular: 0x050505 });
-var leftWall = new THREE.Mesh(leftWallPane, leftWallMat);
-leftWall.rotation.y = Math.PI / 2;
-leftWall.position.x = -30;
-leftWall.position.y = 11;
-leftWall.position.z = 0;
-leftWall.doubleSided = true;
-scene.add(leftWall);
+//Add bounding walls
+addEdgeWall(30, 11, 0); //right
+addEdgeWall(-30, 11, 0); //left
+function addEdgeWall(x, y, z)
+{
+    var wallPlane = new THREE.BoxGeometry(20, 22, 20);
+    var mat = new THREE.MeshPhongMaterial({ color: 0x000000, specular: 0x050505 });
+    var wall = new THREE.Mesh(wallPlane, mat);
+    wall.rotation.y = -Math.PI / 2;
+    wall.position.x = x;
+    wall.position.y = y;
+    wall.position.z = z;
+    wall.doubleSided = true;
+    scene.add(wall);
+}
 
 // CARS
 var geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -110,33 +107,30 @@ var greyCarTexture = new THREE.TextureLoader().load("images/truck.jpg");
 
 // chicken
 var chicken;
+loadChicken(0, 0, -10);
+function loadChicken(x, y, z)
+{
+    var loader = new THREE.OBJLoader();
 
-// instantiate a loader
-var loader = new THREE.OBJLoader();
-
-// load a resource
-loader.load(
-    // resource URL
-    'models/Chicken1.obj',
-    // Function when resource is loaded
-    function (object) {
-        object.scale.set(1, 1, 1);
-        object.position.set(0, 0, -10);
-        object.rotation.x = Math.PI / 2;
-        object.rotation.y = Math.PI;
-        object.traverse(function (child) {
-            if (child instanceof THREE.Mesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-            }
-        });
-        chicken = object;
-        scene.add(chicken);
-    }
-);
+    loader.load('models/Chicken1.obj',
+        function (object) {
+            object.scale.set(1, 1, 1);
+            object.position.set(x, y, z);
+            object.rotation.x = Math.PI / 2;
+            object.rotation.y = Math.PI;
+            object.traverse(function (child) {
+                if (child instanceof THREE.Mesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+            chicken = object;
+            scene.add(chicken);
+        }
+    );
+}
 
 // Variables to determine whether chicke is dead/alive
-
 var hit = false;
 var onFinish = false;
 var gameOver = false;
@@ -150,8 +144,6 @@ var finishNum = 0;
 var justFinished = false;
 var placeHolders = [];
 var score = 0, tempScore = 0;
-var INCREMENT_SPEED = 0.025;
-var TOTAL_LEVELS = 5;
 
 // Initializes on new level reset after death
 function initObjects() {
@@ -220,7 +212,7 @@ function initObjects() {
         for (var y = 0; y < 5; y++) {
             var carMat = new THREE.MeshPhongMaterial({ specular: 0x050505, map: yellowCarTexture });
             var car = new THREE.Mesh(geometry, carMat);
-            car.position.x = groundRoadPlane.parameters.width / 2 + 8 * y;
+            car.position.x = WIDTH/2 + 8 * y;
             car.position.y = 2;
             car.position.z = -9.5;
             car.castShadow = true;
@@ -252,7 +244,7 @@ function initObjects() {
         for (var p = 0; p < 4; p++) {
             var carMat = new THREE.MeshPhongMaterial({ specular: 0x050505, map: pinkCarTexture });
             var car = new THREE.Mesh(geometry, carMat);
-            car.position.x = groundRoadPlane.parameters.width / 2 + 8 * p;
+            car.position.x = WIDTH/2 + 8 * p;
             car.position.y = 6;
             car.position.z = -9.5;
             car.castShadow = true;
@@ -268,7 +260,7 @@ function initObjects() {
         for (var gf = 0; gf < 1; gf++) {
             var carMat = new THREE.MeshPhongMaterial({ specular: 0x050505, map: greenFastCarTexture });
             var car = new THREE.Mesh(geometry, carMat);
-            car.position.x = -groundRoadPlane.parameters.width / 2 - 15 * gf;
+            car.position.x = -WIDTH/2 - 15 * gf;
             car.position.y = 8;
             car.position.z = -9.5;
             car.castShadow = true;
@@ -285,7 +277,7 @@ function initObjects() {
             var carMat = new THREE.MeshPhongMaterial({ specular: 0x050505, map: greyCarTexture });
             var carGeo = new THREE.BoxGeometry(3, 1, 1);
             var car = new THREE.Mesh(carGeo, carMat);
-            car.position.x = groundRoadPlane.parameters.width / 2 + 15 * gt;
+            car.position.x = WIDTH/2 + 15 * gt;
             car.position.y = 10;
             car.position.z = -9.5;
             car.castShadow = true;
@@ -484,26 +476,6 @@ function landedOnFinish() {
     if (chicken.position.y == topBorder - 2) {
         justFinished = true;
         score += tempScore;
-
-        loader.load(
-            // resource URL
-            'models/Chicken1.obj',
-            // Function when resource is loaded
-            function (object) {
-                object.scale.set(1, 1, 1);
-                object.position.set(finishSpots[f].position.x, finishSpots[f].position.y, -10);
-                object.rotation.x = Math.PI / 2;
-                object.rotation.y = Math.PI;
-                object.traverse(function (child) {
-                    if (child instanceof THREE.Mesh) {
-                        child.castShadow = true;
-                        child.receiveShadow = true;
-                    }
-                });
-                placeHolders.push(object);
-                scene.add(object);
-            }
-        );
 
         if (level == TOTAL_LEVELS) {
             document.getElementById("levelCompleteText").innerHTML = "GAME COMPLETED!"
