@@ -19,8 +19,8 @@ window.addEventListener('load', function () {
     main = new ProgramBlock();
     main.setParent(-1);
 
-    // addToProgramBlock(1, new MoveBlock(input.MOVE_FORWARD));
-    // addToProgramBlock(2, new MoveBlock(input.MOVE_LEFT));
+    addToProgramBlock(1, new MoveBlock(input.MOVE_FORWARD));
+    addToProgramBlock(2, new MoveBlock(input.MOVE_LEFT));
 
     // let ifBlock = new IfBlock();
     // addToProgramBlock(3, ifBlock);
@@ -334,67 +334,67 @@ class BlankProgramBlock extends Block {
     }
 }
 
-let funcs = {};
-class FunctionDefinitionBlock extends Block {
-    constructor(funcName) {
-        super();
-        this.funcName = funcName;
-        this.programBlock = new ProgramBlock();
-    }
+// let funcs = {};
+// class FunctionDefinitionBlock extends Block {
+//     constructor(funcName) {
+//         super();
+//         this.funcName = funcName;
+//         this.programBlock = new ProgramBlock();
+//     }
 
-    makeHtml() {
-        let html = document.createElement("div");
-        html.setAttribute("data-block-id", this.id);
-        html.setAttribute("class", `block function-def-block`)
-        html.setAttribute("parent-id", this.parentID);
-        html.textContent = "NEW FUNCTION " + this.funcName
-        html.appendChild(this.programBlock.makeHtml())
-        return html;
-    }
-    run() {
-        console.log("running  function def: " + this.id)
-        funcs[this.funcName] = this.programBlock;//null error check required
-    }
+//     makeHtml() {
+//         let html = document.createElement("div");
+//         html.setAttribute("data-block-id", this.id);
+//         html.setAttribute("class", `block function-def-block`)
+//         html.setAttribute("parent-id", this.parentID);
+//         html.textContent = "NEW FUNCTION " + this.funcName
+//         html.appendChild(this.programBlock.makeHtml())
+//         return html;
+//     }
+//     run() {
+//         console.log("running  function def: " + this.id)
+//         funcs[this.funcName] = this.programBlock;//null error check required
+//     }
 
-    find(id) {
-        // console.log("searching func def: " + this.id)
-        if (this.id === id) {
-            return this;
-        }
-        let found = this.programBlock.find(id);
-        if (found !== null) {
-            return found;
-        }
-        return null;
-    }
-}
+//     find(id) {
+//         // console.log("searching func def: " + this.id)
+//         if (this.id === id) {
+//             return this;
+//         }
+//         let found = this.programBlock.find(id);
+//         if (found !== null) {
+//             return found;
+//         }
+//         return null;
+//     }
+// }
 
-class FunctionCallBlock extends Block {
-    constructor(funcName) {
-        super();
-        this.funcName = funcName;
-    }
+// class FunctionCallBlock extends Block {
+//     constructor(funcName) {
+//         super();
+//         this.funcName = funcName;
+//     }
 
-    makeHtml() {
-        let html = document.createElement("div")
-        html.setAttribute("data-block-id", this.id);
-        html.setAttribute("class", `block function-call-block`)
-        html.setAttribute("parent-id", this.parentID);
-        html.textContent = "EXECUTE FUNCTION " + this.funcName
-        return html;
-    }
-    run() {
-        console.log("running  function call: " + this.id)
-        funcs[this.funcName].run();
-    }
-    find(id) {
-        // console.log("searching func call: " + this.id)
-        if (this.id === id) {
-            return this;
-        }
-        return null;
-    }
-}
+//     makeHtml() {
+//         let html = document.createElement("div")
+//         html.setAttribute("data-block-id", this.id);
+//         html.setAttribute("class", `block function-call-block`)
+//         html.setAttribute("parent-id", this.parentID);
+//         html.textContent = "EXECUTE FUNCTION " + this.funcName
+//         return html;
+//     }
+//     run() {
+//         console.log("running  function call: " + this.id)
+//         funcs[this.funcName].run();
+//     }
+//     find(id) {
+//         // console.log("searching func call: " + this.id)
+//         if (this.id === id) {
+//             return this;
+//         }
+//         return null;
+//     }
+// }
 
 class MoveBlock extends Block {
     constructor(direction) {
@@ -612,7 +612,7 @@ function removeFromProgBlock(id) {
 function tempAddMoveForward() {
     main.addBlock(new MoveBlock(input.MOVE_FORWARD));
     updateHtmlView();
-
+    
 }
 
 // All code-blocks the user has access to
@@ -647,8 +647,8 @@ populateToolbox();
 // they dragged an toolbox object to the solution
 function dragToolboxToSolution(toolbox_type, solution_dest_id) {
     console.log(`Attempting to add new ${toolbox_type} to block id ${solution_dest_id}`)
-    block = new toolbox_tools[toolbox_type]();
-    addToProgramBlock(solution_dest_id, block);
+    let block = new toolbox_tools[toolbox_type]();
+    addToProgramBlock(parseInt(solution_dest_id), block);
 }
 
 function dragSolutionToToolbox(toolbox_obj, solution_dest) {
