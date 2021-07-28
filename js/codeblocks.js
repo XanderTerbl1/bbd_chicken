@@ -8,15 +8,17 @@ window.addEventListener('load', function () {
     let funcDefBlock = new FunctionDefinitionBlock("myFunc");
     addToProgramBlock(1, funcDefBlock);
 
-    let ifBlock = new IfBlock(new TrueConditional());
+    let ifBlock = new IfBlock();
     addToProgramBlock(1, ifBlock);
+    updateConditionalBlock(6, new TrueConditional());
     addToProgramBlock(8, new MoveFoward());
 
-    let ifElseBlock = new IfElseBlock(new FalseConditional);
+    let ifElseBlock = new IfElseBlock();
     addToProgramBlock(1, ifElseBlock);
+    updateConditionalBlock(11, new FalseConditional());
     addToProgramBlock(13, new MoveFoward());
-    addToProgramBlock(12, new MoveFoward());
-    addToProgramBlock(12, new MoveFoward());
+    addToProgramBlock(14, new MoveFoward());
+    addToProgramBlock(14, new MoveFoward());
 
     let funcCallBlock = new FunctionCallBlock("myFunc");
     addToProgramBlock(1, funcCallBlock);
@@ -110,9 +112,9 @@ class ProgramBlock extends Block {
 }
 
 class IfBlock extends Block {
-    constructor(conditionalBlock) {
+    constructor() {
         super();
-        this.conditionalBlock = conditionalBlock;
+        this.conditionalBlock = new BlankConditionalBlock();
         this.programBlock = new ProgramBlock();
     }
 
@@ -155,9 +157,9 @@ class IfBlock extends Block {
 }
 
 class IfElseBlock extends Block {
-    constructor(conditionalBlock) {
+    constructor() {
         super();
-        this.conditionalBlock = conditionalBlock;
+        this.conditionalBlock = new BlankConditionalBlock();
         this.trueProgramBlock = new ProgramBlock();
         this.falseProgramBlock = new ProgramBlock();
     }
@@ -375,7 +377,6 @@ function addToProgramBlock(id, block) {
 }
 
 function updateConditionalBlock(id, block) {
-    block.setParent(id);
     let parent = main.find(id);
     parent.conditionalBlock = block;
     updateHtmlView();
@@ -390,7 +391,7 @@ function removeProgBlock(id) {
 
 
 function tempAddMoveForward(){
-    main.addBlock(new MoveFoward());
+    addToProgramBlock(1, new MoveFoward());
     updateHtmlView();
     
 }
