@@ -367,24 +367,63 @@ class BlankConditionalBlock extends Block {
     }
 }
 
+function blockIsProgramBlock(block) {
+    return block instanceof ProgramBlock;
+}
+
+function blockIsConditional(block) {
+    return block instanceof TrueConditional || block instanceof FalseConditional || block instanceof BlankConditionalBlock;
+}
+
+function blockAcceptsConditional(block) {
+    return block instanceof IfBlock || block instanceof IfElseBlock;
+}
+
 function addToProgramBlock(id, block) {
-    block.setParent(id);
+    if (blockIsConditional(block) || blockIsProgramBlock(block)) {
+        console.log("Second parameter of method 'addToProgramBlock' must be an ID of a non-conditional, non-program block type.")
+        return 0;
+    }
     let parent = main.find(id);
+    if (!blockIsProgramBlock(parent)) {
+        console.log("First parameter of method 'addToProgramBlock' must be an ID of a program block type.")
+        return 0;
+    }
+    block.setParent(id);
     parent.addBlock(block);
     updateHtmlView();
+    return 1;
 }
 
 function updateConditionalBlock(id, block) {
+    if (!blockIsConditional(block)) {
+        console.log("Second parameter of method 'updateConditionalBlock' must be a conditional block type.")
+        return 0;
+    }
     let parent = main.find(id);
+    if (!blockAcceptsConditional(parent)) {
+        console.log("First parameter of method 'updateConditionalBlock' must be an ID of an if or if/else block type.")
+        return 0;
+    }
     parent.conditionalBlock = block;
     updateHtmlView();
+    return 1;
 }
 
-function removeProgBlock(id) {
-    let b = main.find(id);
-    let parent = main.find(parseInt(b.makeHtml().getAttribute("parent-id")));
-    parent.blocks.splice(parent.blocks.indexOf(b), 1);
+function removeFromProgBlock(id) {
+    let block = main.find(id);
+    if (blockIsConditional(block) || blockIsProgramBlock(block)) {
+        console.log("First parameter of method 'removeFromProgBlock' must be an ID of a non-conditional, non-program block type.")
+        return 0;
+    }
+    let parent = main.find(parseInt(block.makeHtml().getAttribute("parent-id")));
+    if (!blockIsProgramBlock(parent)) {
+        console.log("Logic error from method 'removeFromProgBlock' - block parent ID not initialized correctly.")
+        return 0;
+    }
+    parent.blocks.splice(parent.blocks.indexOf(block), 1);
     updateHtmlView();
+    return 1;
 }
 
 
