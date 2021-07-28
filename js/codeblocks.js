@@ -4,11 +4,6 @@ const input = {
     MOVE_FORWARD: 3,
 }
 
-
-function populateToolbox() {
-    // Add all available block-templates to the toolbox
-}
-
 function control(input) {
     // do pre-control stuff...
 
@@ -19,7 +14,7 @@ function control(input) {
 let main;
 window.addEventListener('load', function () {
     main = new ProgramBlock();
-    
+
     addToProgramBlock(1, new MoveFoward());
     addToProgramBlock(1, new MoveFoward());
 
@@ -65,15 +60,26 @@ var getBlockId = (function () {
     return function () { return i++; }
 })();
 
+// Drag helpers
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+function onDrop(event) {
+    event.preventDefault();
+    let data = JSON.parse(event.dataTransfer.getData("data"));
+
+    // dragged from Toolbox to a Solution Block
+    if (data.from == "toolbox" && event.target.hasAttribute("data-block-id")) {
+        dragToolboxToSolution(data.type, event.target.getAttribute("data-block-id"))
+    }
+
+    // add other source-destination pairs
+}
+
 class Block {
     constructor() {
         this.id = getBlockId();
-    }
-
-    convertToElement(htmlStr) {
-        var template = document.createElement('template');
-        template.innerHTML = htmlStr;
-        return template.content.childNodes;
     }
 
     setParent(parentID) {
@@ -114,13 +120,16 @@ class ProgramBlock extends Block {
 
     makeHtml() {
         let html = document.createElement("div");
-        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block program-block`);
         html.setAttribute("parent-id", this.parentID);
         this.blocks.forEach(b => {
             html.appendChild(b.makeHtml());
         });
 
+        // Add drag listeners
+        html.addEventListener("dragover", allowDrop);
+        html.addEventListener("drop", onDrop);
         return html;
     }
 
@@ -139,7 +148,7 @@ class IfBlock extends Block {
 
     makeHtml() {
         let html = document.createElement("div");
-        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block if-block`);
         html.setAttribute("parent-id", this.parentID);
 
@@ -185,7 +194,7 @@ class IfElseBlock extends Block {
 
     makeHtml() {
         let html = document.createElement("div");
-        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block if-else-block`);
         html.setAttribute("parent-id", this.parentID);
 
@@ -235,7 +244,7 @@ class IfElseBlock extends Block {
 class TrueConditional extends Block {
     makeHtml() {
         let html = document.createElement("span");
-        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block conditional-block`);
         html.setAttribute("parent-id", this.parentID);
         html.textContent = "TRUE"
@@ -259,7 +268,7 @@ class TrueConditional extends Block {
 class FalseConditional extends Block {
     makeHtml() {
         let html = document.createElement("span");
-        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block conditional-block`);
         html.setAttribute("parent-id", this.parentID);
         html.textContent = "FALSE"
@@ -345,9 +354,11 @@ class FunctionCallBlock extends Block {
 class MoveFoward extends Block {
     makeHtml() {
         let html = document.createElement("div");
-        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block move-block`);
         html.setAttribute("parent-id", this.parentID);
+        html.setAttribute("draggable", "true")
         html.textContent = "MOVE FORWARD"
         return html;
     }
@@ -369,8 +380,8 @@ class MoveFoward extends Block {
 class BlankConditionalBlock extends Block {
     makeHtml() {
         let html = document.createElement("span");
-        html.setAttribute("id", `block-${this.id}`);
-        html.setAttribute("class", `block blank-block`);
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block conditional-block`);
         html.textContent = "...";
         return html;
     }
@@ -452,3 +463,55 @@ function tempAddMoveForward() {
     main.addBlock(new MoveFoward());
     updateHtmlView();
 }
+
+// All code-blocks the user has access to
+const toolbox_tools = {
+    IF_BLOCK: IfBlock,
+    IF_ELSE_BLOCK: IfElseBlock,
+    MOVE_FW: MoveFoward,
+}
+
+function populateToolbox() {
+    // Add all available block-templates to the toolbox
+    let toolbox = document.getElementById("toolbox");
+    toolbox.innerHTML = "";
+    for (const key in toolbox_tools) {
+        let tool = document.createElement("div");
+        tool.setAttribute("data-block-type", key);
+        tool.setAttribute("class", `toolbox-block`);
+        tool.setAttribute("draggable", 'true');
+        tool.addEventListener("dragstart", function (event) {
+            event.dataTransfer.setData("data", JSON.stringify({ "from": "toolbox", "type": key }));
+        });
+        tool.textContent = key;
+        toolbox.appendChild(tool);
+    }
+    toolbox.addEventListener("dragover", allowDrop);
+    toolbox.addEventListener("drop", onDrop);
+}
+populateToolbox();
+
+
+
+// All drag functions parameters are (DRAGGED_OBJECTED, DROPPED_ON_OBJECT) 
+
+// they dragged an toolbox object to the solution
+function dragToolboxToSolution(toolbox_type, solution_dest_id) {
+    console.log(`Attempting to add new ${toolbox_type} to block id ${solution_dest_id}`)
+    block = new toolbox_tools[toolbox_type]();
+    addToProgramBlock(solution_dest_id, block);
+}
+
+function dragSolutionToToolbox(toolbox_obj, solution_dest) {
+}
+
+function dragSolutionToSolution(solution_obj, solution_dest) {
+    // remove from soluto
+}
+
+// TODO
+// Add drop on toolbox -> th
+// Update all IDs to data-block-id's [done]
+// make everything draggable, draggable
+// Add allowDrop and ondrop where needed (program block and ?)
+// general on-drop handler
