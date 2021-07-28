@@ -26,9 +26,9 @@ scene.add(light2);
 var loader = new THREE.TextureLoader();
 
 //add Base ground
-var baseTexture = new THREE.TextureLoader().load("images/purple-texture.jpg");
+var baseTexture = new THREE.TextureLoader().load("images/grass.jpg");
 var groundBasePlane = new THREE.PlaneBufferGeometry(40, 2);
-var groundBaseMat = new THREE.MeshPhongMaterial({ color: 0x8500d9, specular: 0x050505, map: baseTexture });
+var groundBaseMat = new THREE.MeshPhongMaterial({ color: 0x00FF00, specular: 0x050505, map: baseTexture });
 var groundBase = new THREE.Mesh(groundBasePlane, groundBaseMat);
 groundBase.position.x = 0;
 groundBase.position.y = 0;
@@ -55,7 +55,7 @@ var border = groundRoadPlane.parameters.width / 2;
 
 //add 2nd Base ground
 var groundEndBasePlane = new THREE.PlaneBufferGeometry(40, 2);
-var groundEndBaseMat = new THREE.MeshPhongMaterial({ color: 0x8500d9, specular: 0x050505, map: baseTexture });
+var groundEndBaseMat = new THREE.MeshPhongMaterial({ color: 0x00FF00, specular: 0x050505, map: baseTexture });
 var groundEndBase = new THREE.Mesh(groundEndBasePlane, groundEndBaseMat);
 groundEndBase.position.x = 0;
 groundEndBase.position.y = 12;
@@ -117,17 +117,15 @@ var loader = new THREE.OBJLoader();
 // load a resource
 loader.load(
     // resource URL
-    'models/golfball_lowpoly.obj',
+    'models/Chicken1.obj',
     // Function when resource is loaded
     function (object) {
-        //object.scale.set(0.015, 0.015, 0.015);
-        object.scale.set(0.75, 0.75, 0.75);
+        object.scale.set(1, 1, 1);
         object.position.set(0, 0, -10);
         object.rotation.x = Math.PI / 2;
         object.rotation.y = Math.PI;
         object.traverse(function (child) {
             if (child instanceof THREE.Mesh) {
-                //child.material.color.setRGB(0.24, 0.56, 0.25);
                 child.castShadow = true;
                 child.receiveShadow = true;
             }
@@ -402,17 +400,15 @@ function landedOnFinish() {
 
         loader.load(
             // resource URL
-            'models/golfball_lowpoly.obj',
+            'models/Chicken1.obj',
             // Function when resource is loaded
             function (object) {
-                //object.scale.set(0.025, 0.025, 0.025);
-                object.scale.set(0.75, 0.75, 0.75);
+                object.scale.set(1, 1, 1);
                 object.position.set(finishSpots[f].position.x, finishSpots[f].position.y, -10);
                 object.rotation.x = Math.PI / 2;
                 object.rotation.y = Math.PI;
                 object.traverse(function (child) {
                     if (child instanceof THREE.Mesh) {
-                        //child.material.color.setRGB(0.12, 0.28, 0.125);
                         child.castShadow = true;
                         child.receiveShadow = true;
                     }
@@ -501,7 +497,6 @@ function render() {
             }
         }
         else if (chicken.position.x > border || chicken.position.x < -border) {
-            //went to border by riding log / turtles
             if (chicken.position.z > -11)
                 animatechickenDeath();
             else {
