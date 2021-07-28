@@ -1,10 +1,28 @@
+// Game Controls
+const input = {
+    START_GAME: 0,
+    MOVE_FORWARD: 3,
+}
+
+
+function populateToolbox() {
+    // Add all available block-templates to the toolbox
+}
+
+function control(input) {
+    // do pre-control stuff...
+
+    // call the game controller
+    handleKeysBlock(input);
+}
+
 let main;
 window.addEventListener('load', function () {
     main = new ProgramBlock();
 
     main.addBlock(new MoveFoward());
     main.addBlock(new MoveFoward());
-    
+
     // let funcDefBlock = new FunctionDefinitionBlock("myFunc");
     // funcDefBlock.programBlock.addBlock(new MoveFoward());
     // funcDefBlock.programBlock.addBlock(new MoveFoward());
@@ -25,6 +43,7 @@ window.addEventListener('load', function () {
 
 // Runs the solution recursivley
 function runSolution() {
+    control(input.START_GAME);
     main.run();
 }
 
@@ -250,9 +269,9 @@ class TrueConditional extends Block {
 }
 
 class FalseConditional extends Block {
-    makeHtml() { 
-        let html = document.createElement("span");   
-        html.setAttribute("id", `block-${this.id}`); 
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("id", `block-${this.id}`);
         html.setAttribute("class", `block conditional-block`);
         html.textContent = "FALSE"
         return html;
@@ -343,7 +362,7 @@ class MoveFoward extends Block {
 
     run() {
         console.log("running move forward: " + this.id);
-        player.movePlayer(1);
+        control(input.MOVE_FORWARD);
     }
 
     find(id) {
@@ -402,7 +421,7 @@ function removeProgBlock(id, parentID) {
 }
 
 
-function tempAddMoveForward(){
+function tempAddMoveForward() {
     main.addBlock(new MoveFoward());
     updateHtmlView();
 
@@ -414,5 +433,37 @@ function tempAddMoveForward(){
 
     // removeConditionalBlock(8);
     // removeProgBlock(8,1);
-   
+
 }
+
+
+
+// All blocks and their corresponding type id's
+const blocks = {
+    IF: "if-block",
+    IF: "if-else-block",
+    IF: "if-block",
+}
+
+// create toolbox blocks
+function createToolBox() {
+    let tools = [
+        "IF", // 0
+        "IF-ELSE", // 1
+        "MOVE-FORWARD", // 2
+    ];
+
+    let toolbox = document.getElementById("toolbox");
+
+    for (let i = 0; i < tools.length; i++) {
+        // 
+        let tool = document.createElement("span");
+        tool.setAttribute("data-block-type", i);
+        tool.setAttribute("class", `block blank-block`);
+        tool.textContent = "...";
+
+        // Add
+        toolbox.appendChild()        
+    }
+}
+
