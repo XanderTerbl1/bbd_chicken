@@ -22,28 +22,7 @@ window.addEventListener('load', function () {
 
     addToProgramBlock(1, new MoveFoward());
     addToProgramBlock(1, new MoveFoward());
-
-    let funcDefBlock = new FunctionDefinitionBlock("myFunc");
-    addToProgramBlock(1, funcDefBlock);
-
-    let ifBlock = new IfBlock();
-    addToProgramBlock(1, ifBlock);
-    updateConditionalBlock(6, new TrueConditional());
-    addToProgramBlock(8, new MoveFoward());
-
-    let ifElseBlock = new IfElseBlock();
-    addToProgramBlock(1, ifElseBlock);
-    updateConditionalBlock(11, new FalseConditional());
-    addToProgramBlock(13, new MoveFoward());
-    addToProgramBlock(14, new MoveFoward());
-    addToProgramBlock(14, new MoveFoward());
-
-    let funcCallBlock = new FunctionCallBlock("myFunc");
-    addToProgramBlock(1, funcCallBlock);
-    addToProgramBlock(5, new MoveFoward());
-
-    addToProgramBlock(1, new MoveFoward());
-
+  
     updateHtmlView();
 })
 
@@ -81,7 +60,7 @@ class Block {
     }
 
     // virtual functions               
-    run() { }
+    run() {}
     makeHtml() { }
 }
 
@@ -90,7 +69,7 @@ class ProgramBlock extends Block {
         super();
         this.blocks = []
     }
-
+     
     run() {
         console.log("running  program: " + this.id);
         this.blocks.forEach(b => {
@@ -149,7 +128,7 @@ class IfBlock extends Block {
         return html;
     }
 
-    run() {
+    run() {        
         console.log("running  if: " + this.id);
         if (this.conditionalBlock.run()) {
             this.programBlock.run();
@@ -413,35 +392,3 @@ function tempAddMoveForward() {
     main.addBlock(new MoveFoward());
     updateHtmlView();
 }
-
-
-
-// All blocks and their corresponding type id's
-const blocks = {
-    IF: "if-block",
-    IF: "if-else-block",
-    IF: "if-block",
-}
-
-// create toolbox blocks
-function createToolBox() {
-    let tools = [
-        "IF", // 0
-        "IF-ELSE", // 1
-        "MOVE-FORWARD", // 2
-    ];
-
-    let toolbox = document.getElementById("toolbox");
-
-    for (let i = 0; i < tools.length; i++) {
-        // 
-        let tool = document.createElement("span");
-        tool.setAttribute("data-block-type", i);
-        tool.setAttribute("class", `block blank-block`);
-        tool.textContent = "...";
-
-        // Add
-        toolbox.appendChild()        
-    }
-}
-
