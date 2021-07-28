@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BBD Chicks</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/game.css">
+</head>
+
+<body>
+  <div id="overlays">
+    <div class="game-overlays">
+      <div id="lives">
+        LIVES: <span id="life"></span>
+      </div>
+      <div id="score">
+        SCORE: <span id="score"></span>
+      </div>
+      <div id="gameOver">
+        <center><p id="gameOverText">GAME OVER!</p></center>
+      </div>
+      <div id="start">
+        <center><p>PRESS SPACE TO START</p></center>
+      </div>
+      <div id="level">
+        <center><span id="levelNum"></span></center>
+      </div>
+      <div id="levelComplete">
+        <center><span id="levelCompleteText"></span></center>
+      </div>
+    </div>
+    <div class="controls-overlay">
+      <button onclick="runSolution()">Run Solution</button>
+      <button onclick="tempAddMoveForward()">Add move forward</button>
+      <div id="main-program">
+      </div>
+    </div>
+  </div>
+  <div id="game-board">
+    <canvas id="mywebgl"></canvas>
+  </div>
+</body>
+
+<script src="js/three.js"></script>
+<script src="js/OBJLoader.js"></script>
+<script src="js/game.js"></script>
+<script src="js/codeblocks.js"></script>
+
+</html>

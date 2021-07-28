@@ -1,0 +1,138 @@
+body { margin: 0; }
+			canvas { width: 80%; height: 80% }
+			#lives {
+				position: absolute;
+				z-index: 1;
+				left: 50px;
+				top: 20px;
+				width:100px;
+				height:20px;
+				color: white;
+				visibility: hidden;
+			}
+
+			#score {
+				position: absolute;
+				z-index: 1;
+				left: 50px;
+				top: 80px;
+				width:100px;
+				height:20px;
+				color: white;
+				visibility: hidden;
+			}
+
+			#start {
+				position: absolute;
+				z-index: 1;
+				left: 50px;
+				top: 550px;
+				width:300px;
+				height:100px;
+				width: 90%;
+    		margin: 0 auto;
+			}
+
+			#level {
+				position: absolute;
+				z-index: 1;
+				left: 50px;
+				top: 200px;
+				width:300px;
+				height:100px;
+				width: 90%;
+    		margin: 0 auto;
+				visibility: hidden;
+			}
+
+			#levelComplete {
+				position: absolute;
+				z-index: 2;
+				left: 50px;
+				top: 750px;
+				width: 300px;
+				height: 200px;
+				width: 90%;
+				margin: 0 auto;
+				visibility: hidden;;
+			}
+
+			#gameOver {
+				position: absolute;
+				z-index: 1;
+				left: 50px;
+				top: 750px;
+				width:300px;
+				height:200px;
+				width: 90%;
+				margin: 0 auto;
+				visibility: hidden;
+			}
+
+			p {
+				color: green;
+				font:normal 20pt Arial;
+				text-shadow: 0 1px 0 #ccc,
+               0 2px 0 #c9c9c9,
+               0 3px 0 #bbb,
+               0 4px 0 #b9b9b9,
+               0 5px 0 #aaa,
+               0 6px 1px rgba(0,0,0,.1),
+               0 0 5px rgba(0,0,0,.1),
+               0 1px 3px rgba(0,0,0,.3),
+               0 3px 5px rgba(0,0,0,.2),
+               0 5px 10px rgba(0,0,0,.25),
+               0 10px 10px rgba(0,0,0,.2),
+               0 20px 20px rgba(0,0,0,.15);
+			}
+
+			#levelNum {
+				color: purple;
+				font:normal 50pt Arial;
+				text-shadow: 0 1px 0 #ccc,
+							 0 2px 0 #c9c9c9,
+							 0 3px 0 #bbb,
+							 0 4px 0 #b9b9b9,
+							 0 5px 0 #aaa,
+							 0 6px 1px rgba(0,0,0,.1),
+							 0 0 5px rgba(0,0,0,.1),
+							 0 1px 3px rgba(0,0,0,.3),
+							 0 3px 5px rgba(0,0,0,.2),
+							 0 5px 10px rgba(0,0,0,.25),
+							 0 10px 10px rgba(0,0,0,.2),
+							 0 20px 20px rgba(0,0,0,.15);
+			}
+
+			#levelCompleteText {
+				color: green;
+				font:normal 50pt Arial;
+				text-shadow: 0 1px 0 #ccc,
+							 0 2px 0 #c9c9c9,
+							 0 3px 0 #bbb,
+							 0 4px 0 #b9b9b9,
+							 0 5px 0 #aaa,
+							 0 6px 1px rgba(0,0,0,.1),
+							 0 0 5px rgba(0,0,0,.1),
+							 0 1px 3px rgba(0,0,0,.3),
+							 0 3px 5px rgba(0,0,0,.2),
+							 0 5px 10px rgba(0,0,0,.25),
+							 0 10px 10px rgba(0,0,0,.2),
+							 0 20px 20px rgba(0,0,0,.15);
+			}
+
+			#gameOverText {
+				color: red;
+				font:normal 50pt Arial;
+				text-shadow: 0 1px 0 #ccc,
+							 0 2px 0 #c9c9c9,
+							 0 3px 0 #bbb,
+							 0 4px 0 #b9b9b9,
+							 0 5px 0 #aaa,
+							 0 6px 1px rgba(0,0,0,.1),
+							 0 0 5px rgba(0,0,0,.1),
+							 0 1px 3px rgba(0,0,0,.3),
+							 0 3px 5px rgba(0,0,0,.2),
+							 0 5px 10px rgba(0,0,0,.25),
+							 0 10px 10px rgba(0,0,0,.2),
+							 0 20px 20px rgba(0,0,0,.15);
+			}
