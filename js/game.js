@@ -311,6 +311,14 @@ document.addEventListener('keydown', function () {
     }
 }, false);
 
+document.addEventListener('keyup', function () {
+    down = false;
+    currentlyPressedKeys[event.keyCode] = false;
+    if (!hit) {
+        chicken.position.z = -10;
+    }
+}, false);
+
 // chicken movement
 function handleKeys() 
 {
