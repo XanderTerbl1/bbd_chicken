@@ -23,30 +23,16 @@ window.addEventListener('load', function () {
     main = new ProgramBlock();
     main.setParent(-1);
 
-    addToProgramBlock(1, new MoveBlock(input.MOVE_FORWARD));
-    addToProgramBlock(1, new MoveBlock(input.MOVE_LEFT));
-
-    // let funcDefBlock = new FunctionDefinitionBlock("myFunc");
-    // addToProgramBlock(1, funcDefBlock);
+    // addToProgramBlock(1, new MoveBlock(input.MOVE_FORWARD));
+    // addToProgramBlock(2, new MoveBlock(input.MOVE_LEFT));
 
     // let ifBlock = new IfBlock();
-    // addToProgramBlock(1, ifBlock);
-    // updateConditionalBlock(6, new TrueConditional());
-    // addToProgramBlock(8, new MoveBlock(input.MOVE_BACKWARD));
-    // addToProgramBlock(11, new MoveBlock(input.MOVE_RIGHT));
+    // addToProgramBlock(3, ifBlock);
+    // updateConditionalBlock(5, new TrueConditional());
+    // addToProgramBlock(6, new MoveBlock(input.MOVE_BACKWARD));
 
-    // let funcCallBlock = new FunctionCallBlock("myFunc");
-    // addToProgramBlock(1, funcCallBlock);
-    // addToProgramBlock(5, new MoveBlock(input.MOVE_FORWARD));
-
-    // addToProgramBlock(1, new MoveBlock(input.MOVE_RIGHT));
-
-    // let ifElseBlock = new IfElseBlock();
-    // addToProgramBlock(1, ifElseBlock);
-    // updateConditionalBlock(13, new TrueConditional());
-    // addToProgramBlock(15, new MoveBlock(input.MOVE_RIGHT));
-    // addToProgramBlock(16, new MoveBlock(input.MOVE_LEFT));
-    // addToProgramBlock(21, new MoveBlock(input.MOVE_FORWARD));
+    // addToProgramBlock(4, new MoveBlock(input.MOVE_RIGHT));
+    // addToProgramBlock(10, new MoveBlock(input.MOVE_FORWARD));
 
     updateHtmlView();
 })
@@ -550,7 +536,6 @@ function addToProgramBlock(id, block) {
     }
     let prevBlock = main.find(id);
     if (blockIsConditional(prevBlock)) {
-        console.log(prevBlock)
         console.log("First parameter of method 'addToProgramBlock' must be an ID of a non-conditional block type.")
         return 0;
     }
@@ -568,7 +553,7 @@ function addToProgramBlock(id, block) {
     } else {
         let pos = parent.blocks.indexOf(prevBlock);
         block.setParent(prevBlock.parentID);
-        parent.blocks.splice(pos, 0, block);
+        parent.blocks.splice(pos+1, 0, block);
     }
     updateHtmlView();
     return 1;
@@ -579,12 +564,13 @@ function updateConditionalBlock(id, block) {
         console.log("Second parameter of method 'updateConditionalBlock' must be a conditional block type.")
         return 0;
     }
-    let parent = main.find(id);
+    let prevConditional = main.find(id);
+    let parent = main.find(prevConditional.parentID);
     if (!blockAcceptsConditional(parent)) {
         console.log("First parameter of method 'updateConditionalBlock' must be an ID of an if or if/else block type.")
         return 0;
     }
-    block.setParent(id);
+    block.setParent(prevConditional.parentID);
     parent.conditionalBlock = block;
     updateHtmlView();
     return 1;
@@ -614,10 +600,7 @@ function removeFromProgBlock(id) {
 
 
 function tempAddMoveForward() {
-    // main.addBlock(new MoveBlock(input.MOVE_FORWARD));
-    // updateHtmlView();
-
-    addToProgramBlock(2, new MoveBlock(input.MOVE_RIGHT));
-    // addToProgramBlock(3, new MoveBlock(input.MOVE_BACKWARD));
+    main.addBlock(new MoveBlock(input.MOVE_FORWARD));
+    updateHtmlView();
 
 }
