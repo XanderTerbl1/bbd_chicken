@@ -311,14 +311,6 @@ document.addEventListener('keydown', function () {
     }
 }, false);
 
-document.addEventListener('keyup', function () {
-    down = false;
-    currentlyPressedKeys[event.keyCode] = false;
-    if (!hit) {
-        chicken.position.z = -10;
-    }
-}, false);
-
 // chicken movement
 function handleKeys() 
 {
@@ -370,6 +362,10 @@ function handleKeysBlock(keyIn)
         tempScore += 1;
     }
     pause = false;
+    setTimeout(function () {
+        chicken.position.z = -10;
+    }, 50);
+
 }
 
 // returns true if chickenger has hit vehicle, false otherwise
@@ -390,6 +386,82 @@ function hitsVehicle(vehicle, isTruck) {
         return true;
     }
     return false;
+}
+function findDist(x1, x2, y1, y2)
+{
+    return Math.sqrt(Math.pow((x1-x2), 2) +Math.pow((y1-y2), 2));
+}
+
+function findClosestDirec()
+{
+    var closestCar = findClosest();
+    if(closestCar != null)
+    {
+        if(closestCar.position.x > chicken.position.x)
+            return 1;
+        else if(closestCar.position.x < chicken.position.x)
+            return 2;
+        else if(closestCar.position.y > chicken.position.y)
+            return 3;
+        else if(closestCar.position.y < chicken.position.y)
+            return 4;
+    }
+
+    return -1;
+}
+
+function findClosest()
+{
+    var closest = 0;
+    var closestCar = null;
+    //Cars
+    //yellow cars
+    for (var y = 0; y < yellowCars.length; y++)
+    {
+        if (findDist(yellowCars[y].position.x, chicken.position.x, yellowCars[y].position.y, chicken.position.y) < closest)
+        {
+            closest = findDist(yellowCars[y].position.x, chicken.position.x, yellowCars[y].position.y, chicken.position.y);
+            closestCar = yellowCars[y];
+        }
+    }
+    //green cars
+    for (var gs = 0; gs < greenSlowCars.length; gs++)
+    {
+        if (findDist(greenSlowCars[gs].position.x, chicken.position.x, greenSlowCars[gs].position.y, chicken.position.y) < closest)
+        {
+            closest = findDist(greenSlowCars[gs].position.x, chicken.position.x, greenSlowCars[gs].position.y, chicken.position.y);
+            closestCar = greenSlowCars[gs];
+        }
+    }
+    //pink cars
+    for (var p = 0; p < pinkCars.length; p++)
+    {
+        if (findDist(pinkCars[p].position.x, chicken.position.x, pinkCars[p].position.y, chicken.position.y) < closest)
+        {
+            closest = findDist(pinkCars[p].position.x, chicken.position.x, pinkCars[p].position.y, chicken.position.y);
+            closestCar = pinkCars[p];
+        }
+    }
+    //green cars
+    for (var gf = 0; gf < greenFastCars.length; gf++)
+    {
+        if (findDist(greenFastCars[gf].position.x, chicken.position.x, greenFastCars[gf].position.y, chicken.position.y) < closest)
+        {
+            closest = findDist(greenFastCars[gf].position.x, chicken.position.x, greenFastCars[gf].position.y, chicken.position.y);
+            closestCar = greenFastCars[gf];
+        }
+    }
+    //grey cars
+    for (var gt = 0; gt < greyCars.length; gt++) 
+    {
+        if (findDist(greyCars[gt].position.x, chicken.position.x, greyCars[gt].position.y, chicken.position.y) < closest)
+        {
+            closest = findDist(greyCars[gt].position.x, chicken.position.x, greyCars[gt].position.y, chicken.position.y);
+            closestCar = greyCars[gt];
+        }
+    }
+
+    return closestCar;
 }
 
 // returns true if chickenger has landed on finish spot at end, false otherwise
