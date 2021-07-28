@@ -19,10 +19,31 @@ function control(input) {
 let main;
 window.addEventListener('load', function () {
     main = new ProgramBlock();
+    
+    addToProgramBlock(1, new MoveFoward());
+    addToProgramBlock(1, new MoveFoward());
+
+    let funcDefBlock = new FunctionDefinitionBlock("myFunc");
+    addToProgramBlock(1, funcDefBlock);
+
+    let ifBlock = new IfBlock();
+    addToProgramBlock(1, ifBlock);
+    updateConditionalBlock(6, new TrueConditional());
+    addToProgramBlock(8, new MoveFoward());
+
+    let ifElseBlock = new IfElseBlock();
+    addToProgramBlock(1, ifElseBlock);
+    updateConditionalBlock(11, new FalseConditional());
+    addToProgramBlock(13, new MoveFoward());
+    addToProgramBlock(14, new MoveFoward());
+    addToProgramBlock(14, new MoveFoward());
+
+    let funcCallBlock = new FunctionCallBlock("myFunc");
+    addToProgramBlock(1, funcCallBlock);
+    addToProgramBlock(5, new MoveFoward());
 
     addToProgramBlock(1, new MoveFoward());
-    addToProgramBlock(1, new MoveFoward());
-  
+
     updateHtmlView();
 })
 
@@ -60,7 +81,7 @@ class Block {
     }
 
     // virtual functions               
-    run() {}
+    run() { }
     makeHtml() { }
 }
 
@@ -69,7 +90,7 @@ class ProgramBlock extends Block {
         super();
         this.blocks = []
     }
-     
+
     run() {
         console.log("running  program: " + this.id);
         this.blocks.forEach(b => {
@@ -128,7 +149,7 @@ class IfBlock extends Block {
         return html;
     }
 
-    run() {        
+    run() {
         console.log("running  if: " + this.id);
         if (this.conditionalBlock.run()) {
             this.programBlock.run();
