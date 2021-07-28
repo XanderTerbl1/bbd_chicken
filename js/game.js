@@ -111,9 +111,6 @@ var greyCarTexture = new THREE.TextureLoader().load("images/truck.jpg");
 // chicken
 var chicken;
 
-//var clock = new THREE.clock();
-//clock.autoStart = false;
-
 // instantiate a loader
 var loader = new THREE.OBJLoader();
 
@@ -154,7 +151,7 @@ var levelsCompleted = 0;
 var finishNum = 0;
 var justFinished = false;
 var placeHolders = [];
-var score = 0;
+var score = 0, tempScore = 0;
 var INCREMENT_SPEED = 0.025;
 var TOTAL_LEVELS = 5;
 
@@ -350,7 +347,6 @@ function handleKeysBlock(keyIn)
         startGame = true;
         gameCompleted = false;
         gameOver = false;
-        //clock.start();
     }
     else if (startGame && !gameOver && !gameCompleted) {
         if (keyIn == 1 && chicken.position.x + 2 < border) { // Press Right
@@ -373,8 +369,8 @@ function handleKeysBlock(keyIn)
             chicken.position.y -= 2;
             chicken.position.z = -9;
         }
+        tempScore += 1;
     }
-    //clock.start();
     pause = false;
 }
 
@@ -402,8 +398,7 @@ function hitsVehicle(vehicle, isTruck) {
 function landedOnFinish() {
     if (chicken.position.y == topBorder - 2) {
         justFinished = true;
-        //clock.stop();
-        //score += Math.round(clock.getDelta());
+        score += tempScore;
 
         loader.load(
             // resource URL
@@ -467,7 +462,7 @@ function landedOnFinish() {
                 levelsCompleted++;
             }, 2000);
         }
-        //clock.getDelta();
+        tempScore = 0;
         return true;
     }
     return false;
@@ -476,7 +471,7 @@ function landedOnFinish() {
 
 // RENDERING THE SCENE
 function render() {
-    requestAnimationFrame(render);
+    requestAnimationFrame(render); 
     if (startGame) {
         if (hit && !onFinish) {
             if (chicken.position.z > -11)
@@ -592,7 +587,6 @@ function updateCars()
         }
         setTimeout(function () {
             pause = true;
-            //clock.stop();
         }, 200);
     }
 }
