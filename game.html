@@ -11,7 +11,13 @@
 </head>
 
 <style>
-  .toolbox-block {}
+  .toolbox-block {
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    border: 1px solid black;
+    cursor: move;
+  }
 </style>
 
 <body>
@@ -40,12 +46,15 @@
         <center><span id="levelCompleteText"></span></center>
       </div>
     </div>
-    <div class="controls-overlay">
-      <div id="toolbox">
-      </div>
-      <button onclick="runSolution()">Run Solution</button>
-      <button onclick="tempAddMoveForward()">Add move forward</button>
-      <div id="main-program">
+    <div class="controls-overlay">     
+      <button class="btn-run" onclick="runSolution()">Run Solution</button>
+      <button class="btn-reset">Reset</button>
+      <hr>
+      <div style="display: inline-block;">       
+        <div id="main-program">
+        </div>
+      </div>      
+      <div id="toolbox" style="display: inline-block;  vertical-align:top;">
       </div>
     </div>
   </div>

@@ -2,11 +2,9 @@
 const input = {
     START_GAME: 0,
     MOVE_FORWARD: 3,
-}
-
-
-function populateToolbox() {
-    // Add all available block-templates to the toolbox
+    MOVE_BACKWARD: 4,
+    MOVE_LEFT: 2,
+    MOVE_RIGHT: 1,
 }
 
 function control(input) {
@@ -19,30 +17,32 @@ function control(input) {
 let main;
 window.addEventListener('load', function () {
     main = new ProgramBlock();
-    
-    addToProgramBlock(1, new MoveFoward());
-    addToProgramBlock(1, new MoveFoward());
+    main.setParent(-1);
 
-    let funcDefBlock = new FunctionDefinitionBlock("myFunc");
-    addToProgramBlock(1, funcDefBlock);
+    addToProgramBlock(1, new MoveBlock(input.MOVE_FORWARD));
+    addToProgramBlock(1, new MoveBlock(input.MOVE_LEFT));
 
-    let ifBlock = new IfBlock();
-    addToProgramBlock(1, ifBlock);
-    updateConditionalBlock(6, new TrueConditional());
-    addToProgramBlock(8, new MoveFoward());
+    // let funcDefBlock = new FunctionDefinitionBlock("myFunc");
+    // addToProgramBlock(1, funcDefBlock);
 
-    let ifElseBlock = new IfElseBlock();
-    addToProgramBlock(1, ifElseBlock);
-    updateConditionalBlock(11, new FalseConditional());
-    addToProgramBlock(13, new MoveFoward());
-    addToProgramBlock(14, new MoveFoward());
-    addToProgramBlock(14, new MoveFoward());
+    // let ifBlock = new IfBlock();
+    // addToProgramBlock(1, ifBlock);
+    // updateConditionalBlock(6, new TrueConditional());
+    // addToProgramBlock(8, new MoveBlock(input.MOVE_BACKWARD));
+    // addToProgramBlock(11, new MoveBlock(input.MOVE_RIGHT));
 
-    let funcCallBlock = new FunctionCallBlock("myFunc");
-    addToProgramBlock(1, funcCallBlock);
-    addToProgramBlock(5, new MoveFoward());
+    // let funcCallBlock = new FunctionCallBlock("myFunc");
+    // addToProgramBlock(1, funcCallBlock);
+    // addToProgramBlock(5, new MoveBlock(input.MOVE_FORWARD));
 
-    addToProgramBlock(1, new MoveFoward());
+    // addToProgramBlock(1, new MoveBlock(input.MOVE_RIGHT));
+
+    // let ifElseBlock = new IfElseBlock();
+    // addToProgramBlock(1, ifElseBlock);
+    // updateConditionalBlock(13, new TrueConditional());
+    // addToProgramBlock(15, new MoveBlock(input.MOVE_RIGHT));
+    // addToProgramBlock(16, new MoveBlock(input.MOVE_LEFT));
+    // addToProgramBlock(21, new MoveBlock(input.MOVE_FORWARD));
 
     updateHtmlView();
 })
@@ -65,15 +65,26 @@ var getBlockId = (function () {
     return function () { return i++; }
 })();
 
+// Drag helpers
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+function onDrop(event) {
+    event.preventDefault();
+    let data = JSON.parse(event.dataTransfer.getData("data"));
+
+    // dragged from Toolbox to a Solution Block
+    if (data.from == "toolbox" && event.target.hasAttribute("data-block-id")) {
+        dragToolboxToSolution(data.type, event.target.getAttribute("data-block-id"))
+    }
+
+    // add other source-destination pairs
+}
+
 class Block {
     constructor() {
         this.id = getBlockId();
-    }
-
-    convertToElement(htmlStr) {
-        var template = document.createElement('template');
-        template.innerHTML = htmlStr;
-        return template.content.childNodes;
     }
 
     setParent(parentID) {
@@ -86,9 +97,10 @@ class Block {
 }
 
 class ProgramBlock extends Block {
-    constructor() {
+    constructor(left = true) {
         super();
         this.blocks = []
+        this.left = left;
     }
 
     run() {
@@ -114,18 +126,22 @@ class ProgramBlock extends Block {
 
     makeHtml() {
         let html = document.createElement("div");
-        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block program-block`);
         html.setAttribute("parent-id", this.parentID);
         this.blocks.forEach(b => {
             html.appendChild(b.makeHtml());
         });
 
+        // Add drag listeners
+        html.addEventListener("dragover", allowDrop);
+        html.addEventListener("drop", onDrop);
         return html;
     }
 
     // block-specific methods
     addBlock(block) {
+        block.setParent(this.id);
         this.blocks.push(block);
     }
 }
@@ -133,13 +149,13 @@ class ProgramBlock extends Block {
 class IfBlock extends Block {
     constructor() {
         super();
-        this.conditionalBlock = new BlankConditionalBlock();
-        this.programBlock = new ProgramBlock();
+        this.conditionalBlock = new BlankConditionalBlock(this.id);
+        this.programBlock = new BlankProgramBlock(this.id);
     }
 
     makeHtml() {
         let html = document.createElement("div");
-        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block if-block`);
         html.setAttribute("parent-id", this.parentID);
 
@@ -175,67 +191,67 @@ class IfBlock extends Block {
     }
 }
 
-class IfElseBlock extends Block {
-    constructor() {
-        super();
-        this.conditionalBlock = new BlankConditionalBlock();
-        this.trueProgramBlock = new ProgramBlock();
-        this.falseProgramBlock = new ProgramBlock();
-    }
+// class IfElseBlock extends Block {
+//     constructor() {
+//         super();
+//         this.conditionalBlock = new BlankConditionalBlock(this.id);
+//         this.trueProgramBlock = new BlankProgramBlock(this.id);
+//         this.falseProgramBlock = new BlankProgramBlock(this.id, false);
+//     }
 
-    makeHtml() {
-        let html = document.createElement("div");
-        html.setAttribute("id", `block-${this.id}`);
-        html.setAttribute("class", `block if-else-block`);
-        html.setAttribute("parent-id", this.parentID);
+//     makeHtml() {
+//         let html = document.createElement("div");
+//                 html.setAttribute("data-block-id", this.id);;
+//         html.setAttribute("class", `block if-else-block`);
+//         html.setAttribute("parent-id", this.parentID);
 
-        html.textContent = "IF "
-        html.appendChild(this.conditionalBlock.makeHtml())
-        html.appendChild(this.trueProgramBlock.makeHtml())
+//         html.textContent = "IF "
+//         html.appendChild(this.conditionalBlock.makeHtml())
+//         html.appendChild(this.trueProgramBlock.makeHtml())
 
-        let elseDiv = document.createElement("div");
-        elseDiv.textContent = "ELSE "
-        html.appendChild(elseDiv);
-        html.appendChild(this.falseProgramBlock.makeHtml())
-        return html;
-    }
+//         let elseDiv = document.createElement("div");
+//         elseDiv.textContent = "ELSE "
+//         html.appendChild(elseDiv);
+//         html.appendChild(this.falseProgramBlock.makeHtml())
+//         return html;
+//     }
 
-    run() {
-        console.log("running  if else: " + this.id);
-        if (this.conditionalBlock.run()) {
-            this.trueProgramBlock.run();
-        } else {
-            this.falseProgramBlock.run();
-        }
-    }
+//     run() {
+//         console.log("running  if else: " + this.id);
+//         if (this.conditionalBlock.run()) {
+//             this.trueProgramBlock.run();
+//         } else {
+//             this.falseProgramBlock.run();
+//         }
+//     }
 
-    find(id) {
-        // console.log("searching if/else: " + this.id)
-        if (this.id === id) {
-            return this;
-        }
+//     find(id) {
+//         // console.log("searching if/else: " + this.id)
+//         if (this.id === id) {
+//             return this;
+//         }
 
-        let found = this.conditionalBlock.find(id);
-        if (found !== null) {
-            return found;
-        }
-        found = this.trueProgramBlock.find(id);
-        if (found !== null) {
-            return found;
-        }
-        found = this.falseProgramBlock.find(id);
-        if (found !== null) {
-            return found;
-        }
+//         let found = this.conditionalBlock.find(id);
+//         if (found !== null) {
+//             return found;
+//         }
+//         found = this.trueProgramBlock.find(id);
+//         if (found !== null) {
+//             return found;
+//         }
+//         found = this.falseProgramBlock.find(id);
+//         if (found !== null) {
+//             return found;
+//         }
 
-        return null;
-    }
-}
+//         return null;
+//     }
+// }
 
 class TrueConditional extends Block {
     makeHtml() {
         let html = document.createElement("span");
-        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block conditional-block`);
         html.setAttribute("parent-id", this.parentID);
         html.textContent = "TRUE"
@@ -259,7 +275,7 @@ class TrueConditional extends Block {
 class FalseConditional extends Block {
     makeHtml() {
         let html = document.createElement("span");
-        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block conditional-block`);
         html.setAttribute("parent-id", this.parentID);
         html.textContent = "FALSE"
@@ -280,6 +296,58 @@ class FalseConditional extends Block {
     }
 }
 
+class BlankConditionalBlock extends Block {
+    constructor(parentID) {
+        super();
+        this.parentID = parentID;
+    }
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block blank-block`);
+        html.textContent = "...";
+        return html;
+    }
+
+    run() {
+        console.log("running blank conditional: " + this.id);
+    }
+
+    find(id) {
+        // console.log("searching blank: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
+
+class BlankProgramBlock extends Block {
+    constructor(parentID, left = true) {
+        super();
+        this.parentID = parentID;
+        this.left = left;
+    }
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block blank-block`);
+        html.textContent = "...";
+        return html;
+    }
+
+    run() {
+        console.log("running blank program: " + this.id);
+    }
+
+    find(id) {
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
+
 let funcs = {};
 class FunctionDefinitionBlock extends Block {
     constructor(funcName) {
@@ -290,7 +358,7 @@ class FunctionDefinitionBlock extends Block {
 
     makeHtml() {
         let html = document.createElement("div");
-        html.setAttribute("id", `block-${this.id}`)
+        html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block function-def-block`)
         html.setAttribute("parent-id", this.parentID);
         html.textContent = "NEW FUNCTION " + this.funcName
@@ -323,7 +391,7 @@ class FunctionCallBlock extends Block {
 
     makeHtml() {
         let html = document.createElement("div")
-        html.setAttribute("id", `block-${this.id}`)
+        html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block function-call-block`)
         html.setAttribute("parent-id", this.parentID);
         html.textContent = "EXECUTE FUNCTION " + this.funcName
@@ -342,19 +410,53 @@ class FunctionCallBlock extends Block {
     }
 }
 
-class MoveFoward extends Block {
+class MoveBlock extends Block {
+    constructor(direction) {
+        super();
+        this.direction = direction;
+    }
     makeHtml() {
         let html = document.createElement("div");
-        html.setAttribute("id", `block-${this.id}`);
+        html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block move-block`);
         html.setAttribute("parent-id", this.parentID);
-        html.textContent = "MOVE FORWARD"
+        switch (this.direction) {
+            case input.MOVE_LEFT:
+                html.textContent = "MOVE LEFT";
+                break;
+            case input.MOVE_RIGHT:
+                html.textContent = "MOVE RIGHT";
+                break;
+            case input.MOVE_BACKWARD:
+                html.textContent = "MOVE BACKWARD";
+                break;
+            default:
+                html.textContent = "MOVE FORWARD";
+                break;
+        }
+
         return html;
     }
 
     run() {
-        console.log("running move forward: " + this.id);
-        control(input.MOVE_FORWARD);
+        switch (this.direction) {
+            case input.MOVE_LEFT:
+                console.log("running move left: " + this.id);
+                control(input.MOVE_LEFT);
+                break;
+            case input.MOVE_RIGHT:
+                console.log("running move right: " + this.id);
+                control(input.MOVE_RIGHT);
+                break;
+            case input.MOVE_BACKWARD:
+                console.log("running move backward: " + this.id);
+                control(input.MOVE_BACKWARD);
+                break;
+            default:
+                console.log("running move forward: " + this.id);
+                control(input.MOVE_FORWARD);
+                break;
+        }
     }
 
     find(id) {
@@ -366,27 +468,77 @@ class MoveFoward extends Block {
     }
 }
 
-class BlankConditionalBlock extends Block {
-    makeHtml() {
-        let html = document.createElement("span");
-        html.setAttribute("id", `block-${this.id}`);
-        html.setAttribute("class", `block blank-block`);
-        html.textContent = "...";
-        return html;
-    }
+// class MoveBackward extends Block {
+//     makeHtml() {
+//         let html = document.createElement("div");
+//                 html.setAttribute("data-block-id", this.id);;
+//         html.setAttribute("class", `block move-block`);
+//         html.setAttribute("parent-id", this.parentID);
+//         html.textContent = "MOVE BACKWARD"
+//         return html;
+//     }
 
-    run() {
-        console.log("running blank: " + this.id);
-    }
+//     run() {
+//         console.log("running move backward: " + this.id);
+//         control(input.MOVE_BACKWARD);
+//     }
 
-    find(id) {
-        // console.log("searching blank: " + this.id)
-        if (this.id === id) {
-            return this;
-        }
-        return null;
-    }
-}
+//     find(id) {
+//         // console.log("searching move backward: " + this.id)
+//         if (this.id === id) {
+//             return this;
+//         }
+//         return null;
+//     }
+// }
+
+// class MoveLeft extends Block {
+//     makeHtml() {
+//         let html = document.createElement("div");
+//                 html.setAttribute("data-block-id", this.id);;
+//         html.setAttribute("class", `block move-block`);
+//         html.setAttribute("parent-id", this.parentID);
+//         html.textContent = "MOVE LEFT"
+//         return html;
+//     }
+
+//     run() {
+//         console.log("running move left: " + this.id);
+//         control(input.MOVE_LEFT);
+//     }
+
+//     find(id) {
+//         // console.log("searching move left: " + this.id)
+//         if (this.id === id) {
+//             return this;
+//         }
+//         return null;
+//     }
+// }
+
+// class MoveRight extends Block {
+//     makeHtml() {
+//         let html = document.createElement("div");
+//                 html.setAttribute("data-block-id", this.id);;
+//         html.setAttribute("class", `block move-block`);
+//         html.setAttribute("parent-id", this.parentID);
+//         html.textContent = "MOVE RIGHT"
+//         return html;
+//     }
+
+//     run() {
+//         console.log("running move right: " + this.id);
+//         control(input.MOVE_RIGHT);
+//     }
+
+//     find(id) {
+//         // console.log("searching move right: " + this.id)
+//         if (this.id === id) {
+//             return this;
+//         }
+//         return null;
+//     }
+// }
 
 function blockIsProgramBlock(block) {
     return block instanceof ProgramBlock;
@@ -397,7 +549,8 @@ function blockIsConditional(block) {
 }
 
 function blockAcceptsConditional(block) {
-    return block instanceof IfBlock || block instanceof IfElseBlock;
+    // return block instanceof IfBlock || block instanceof IfElseBlock;
+    return block instanceof IfBlock;
 }
 
 function addToProgramBlock(id, block) {
@@ -405,13 +558,28 @@ function addToProgramBlock(id, block) {
         console.log("Second parameter of method 'addToProgramBlock' must be an ID of a non-conditional, non-program block type.")
         return 0;
     }
-    let parent = main.find(id);
-    if (!blockIsProgramBlock(parent)) {
-        console.log("First parameter of method 'addToProgramBlock' must be an ID of a program block type.")
+    let prevBlock = main.find(id);
+    if (blockIsConditional(prevBlock)) {
+        console.log(prevBlock)
+        console.log("First parameter of method 'addToProgramBlock' must be an ID of a non-conditional block type.")
         return 0;
     }
-    block.setParent(id);
-    parent.addBlock(block);
+    if (prevBlock.parentID === -1) {//adding on line 1
+        block.setParent(1);
+        main.blocks.unshift(block);
+        updateHtmlView();
+        return 1;
+    }
+    let parent = main.find(prevBlock.parentID);
+    if (prevBlock instanceof BlankProgramBlock) {
+        parent.programBlock = new ProgramBlock();
+        parent.programBlock.setParent(prevBlock.parentID);
+        parent.programBlock.addBlock(block);
+    } else {
+        let pos = parent.blocks.indexOf(prevBlock);
+        block.setParent(prevBlock.parentID);
+        parent.blocks.splice(pos, 0, block);
+    }
     updateHtmlView();
     return 1;
 }
@@ -426,6 +594,7 @@ function updateConditionalBlock(id, block) {
         console.log("First parameter of method 'updateConditionalBlock' must be an ID of an if or if/else block type.")
         return 0;
     }
+    block.setParent(id);
     parent.conditionalBlock = block;
     updateHtmlView();
     return 1;
@@ -437,18 +606,77 @@ function removeFromProgBlock(id) {
         console.log("First parameter of method 'removeFromProgBlock' must be an ID of a non-conditional, non-program block type.")
         return 0;
     }
-    let parent = main.find(parseInt(block.makeHtml().getAttribute("parent-id")));
-    if (!blockIsProgramBlock(parent)) {
+    let progBlock = main.find(parseInt(block.makeHtml().getAttribute("parent-id")));
+    if (!blockIsProgramBlock(progBlock)) {
+        console.log(progBlock)
         console.log("Logic error from method 'removeFromProgBlock' - block parent ID not initialized correctly.")
         return 0;
     }
-    parent.blocks.splice(parent.blocks.indexOf(block), 1);
+    if (progBlock.blocks.length === 1) {
+        let parent = main.find(progBlock.parentID);
+        parent.programBlock = new BlankProgramBlock(progBlock.parentID);
+    } else {
+        progBlock.blocks.splice(progBlock.blocks.indexOf(block), 1);
+    }
     updateHtmlView();
     return 1;
 }
 
 
 function tempAddMoveForward() {
-    main.addBlock(new MoveFoward());
-    updateHtmlView();
+    // main.addBlock(new MoveBlock(input.MOVE_FORWARD));
+    // updateHtmlView();
+
+    addToProgramBlock(2, new MoveBlock(input.MOVE_RIGHT));
+    // addToProgramBlock(3, new MoveBlock(input.MOVE_BACKWARD));
+
 }
+
+// All code-blocks the user has access to
+const toolbox_tools = {
+    IF_BLOCK: IfBlock,
+}
+
+function populateToolbox() {
+    // Add all available block-templates to the toolbox
+    let toolbox = document.getElementById("toolbox");
+    toolbox.innerHTML = "";
+    for (const key in toolbox_tools) {
+        let tool = document.createElement("div");
+        tool.setAttribute("data-block-type", key);
+        tool.setAttribute("class", `toolbox-block`);
+        tool.setAttribute("draggable", 'true');
+        tool.addEventListener("dragstart", function (event) {
+            event.dataTransfer.setData("data", JSON.stringify({ "from": "toolbox", "type": key }));
+        });
+        tool.textContent = key;
+        toolbox.appendChild(tool);
+    }
+    toolbox.addEventListener("dragover", allowDrop);
+    toolbox.addEventListener("drop", onDrop);
+}
+populateToolbox();
+
+
+
+// All drag functions parameters are (DRAGGED_OBJECTED, DROPPED_ON_OBJECT) 
+
+// they dragged an toolbox object to the solution
+function dragToolboxToSolution(toolbox_type, solution_dest_id) {
+    console.log(`Attempting to add new ${toolbox_type} to block id ${solution_dest_id}`)
+    block = new toolbox_tools[toolbox_type]();
+    addToProgramBlock(solution_dest_id, block);
+}
+
+function dragSolutionToToolbox(toolbox_obj, solution_dest) {
+}
+
+function dragSolutionToSolution(solution_obj, solution_dest) {
+    // remove from soluto
+}
+
+// TODO
+// Add drop on toolbox -> drops are remove/
+// Update all IDs to data-block-id's [done]
+// make everything draggable that requires it
+// Add allowDrop and ondrop where needed (program block and ?)
