@@ -394,7 +394,7 @@ function findDist(x1, x2, y1, y2)
 
 function findClosestDirec()
 {
-    var closestCar = findClosest();
+    var closestCar = findClosest(false);
     if(closestCar != null)
     {
         if(closestCar.position.x > chicken.position.x)
@@ -410,7 +410,12 @@ function findClosestDirec()
     return -1;
 }
 
-function findClosest()
+function findClosestDist()
+{
+    return findClosest(true);
+}
+
+function findClosest(distanceBool)
 {
     var closest = 0;
     var closestCar = null;
@@ -461,6 +466,8 @@ function findClosest()
         }
     }
 
+    if(distanceBool)
+        return closest;
     return closestCar;
 }
 
