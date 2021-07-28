@@ -360,12 +360,11 @@ function handleKeysBlock(keyIn)
             chicken.position.z = -9;
         }
         tempScore += 1;
+        pause = false;
+        setTimeout(function () {
+            chicken.position.z = -10;
+        }, 50);
     }
-    pause = false;
-    setTimeout(function () {
-        chicken.position.z = -10;
-    }, 50);
-
 }
 
 // returns true if chickenger has hit vehicle, false otherwise
@@ -493,6 +492,7 @@ function landedOnFinish() {
                 levelsCompleted++;
             }, 2000);
             gameCompleted = true;
+            startGame = false;
             console.log("game complete");
         }
         // Otherwise, just show that user has completed level.
@@ -526,7 +526,7 @@ function landedOnFinish() {
 
 // RENDERING THE SCENE
 function render() {
-    requestAnimationFrame(render); 
+    //requestAnimationFrame(render); 
     if (startGame) {
         if (hit && !onFinish) {
             if (chicken.position.z > -11)
@@ -583,7 +583,9 @@ function render() {
     }
     renderer.render(scene, camera);
 }
-render();
+//render();
+setInterval(function(){requestAnimationFrame(render);}, 10);
+
 
 function animatechickenDeath() {
     chicken.position.z -= 0.1;
@@ -601,7 +603,7 @@ function updateCars()
         //Cars
         //yellow cars
         for (var y = 0; y < yellowCars.length; y++) {
-            yellowCars[y].position.x -= 0.05 + INCREMENT_SPEED * levelsCompleted;
+            yellowCars[y].position.x -= 0.2 + INCREMENT_SPEED * levelsCompleted;
             if (yellowCars[y].position.x < -(border + normalCarLength))
                 yellowCars[y].position.x = border + normalCarLength;
             if (hitsVehicle(yellowCars[y], false))
@@ -609,7 +611,7 @@ function updateCars()
         }
         //green cars
         for (var gs = 0; gs < greenSlowCars.length; gs++) {
-            greenSlowCars[gs].position.x += 0.05 + INCREMENT_SPEED * levelsCompleted;
+            greenSlowCars[gs].position.x += 0.2 + INCREMENT_SPEED * levelsCompleted;
             if (greenSlowCars[gs].position.x > border + normalCarLength)
                 greenSlowCars[gs].position.x = -(border + normalCarLength);
             if (hitsVehicle(greenSlowCars[gs], false))
@@ -617,7 +619,7 @@ function updateCars()
         }
         //pink cars
         for (var p = 0; p < pinkCars.length; p++) {
-            pinkCars[p].position.x -= 0.075 + INCREMENT_SPEED * levelsCompleted;
+            pinkCars[p].position.x -= 0.3 + INCREMENT_SPEED * levelsCompleted;
             if (pinkCars[p].position.x < -(border + normalCarLength))
                 pinkCars[p].position.x = border + normalCarLength;
             if (hitsVehicle(pinkCars[p], false))
@@ -625,7 +627,7 @@ function updateCars()
         }
         //green cars
         for (var gf = 0; gf < greenFastCars.length; gf++) {
-            greenFastCars[gf].position.x += 0.125 + INCREMENT_SPEED * levelsCompleted;
+            greenFastCars[gf].position.x += 0.5 + INCREMENT_SPEED * levelsCompleted;
             if (greenFastCars[gf].position.x > border + normalCarLength)
                 greenFastCars[gf].position.x = -(border + normalCarLength);
             if (hitsVehicle(greenFastCars[gf], false))
@@ -633,7 +635,7 @@ function updateCars()
         }
         //grey cars
         for (var gt = 0; gt < greyCars.length; gt++) {
-            greyCars[gt].position.x -= 0.125 + INCREMENT_SPEED * levelsCompleted;
+            greyCars[gt].position.x -= 0.5 + INCREMENT_SPEED * levelsCompleted;
             if (greyCars[gt].position.x < -(border + greyCarLength))
                 greyCars[gt].position.x = border + greyCarLength;
             if (hitsVehicle(greyCars[gt], true))
@@ -641,6 +643,6 @@ function updateCars()
         }
         setTimeout(function () {
             pause = true;
-        }, 200);
+        }, 150);
     }
 }
