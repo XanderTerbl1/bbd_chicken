@@ -151,14 +151,15 @@ var score = 0, tempScore = 0;
 // Initializes on new level reset after death
 function initObjects() {
     hit = false;
-    if (gameOver) {
+    if (gameOver)
+    {
         run = 0;
         lives = MAX_LIVES;
         level = 1;
         levelsCompleted = 0;
         score = 0;
         tempScore = 0;
-        document.getElementById("start").style.visibility = "hidden";
+        //document.getElementById("start").style.visibility = "hidden";
         document.getElementById("gameOverText").style.visibility = "hidden";
         for (var i = 0; i < placeHolders.length; i++)
             scene.remove(placeHolders[i]);
@@ -166,9 +167,11 @@ function initObjects() {
     }
     else
         document.getElementById("life").style.visibility = "visible";
+
     document.getElementById("score").style.visibility = "visible";
 
-    if (gameCompleted) {
+    if (gameCompleted)
+    {
         run = 0;
         lives = MAX_LIVES;
         level = 1;
@@ -211,7 +214,8 @@ function initObjects() {
     document.getElementById("levelNum").innerHTML = "LEVEL " + level;
     document.getElementById("score").innerHTML = "SCORE: " + score;
 
-    if (run != 0) {
+    if(run != 0)
+    {
         //Reset
         scene.remove(chicken);
         chicken.position.x = 0;
@@ -226,7 +230,8 @@ function initObjects() {
 
         document.dispatchEvent(resetEvent);
     }
-    else {
+    else
+    {
         // yellow cars slow
         for (var y = 0; y < yellowCars.length; y++)
             scene.remove(yellowCars[y]);
@@ -348,12 +353,13 @@ function handleKeys()
         handleKeysBlock(4);
 }
 
+
 var pause = false;
 function handleKeysBlock(keyIn)
 {
     if (keyIn == 0) { // Press Space to begin game!
         initObjects();
-        document.getElementById("start").style.visibility = "hidden";
+        //document.getElementById("start").style.visibility = "hidden";
         document.getElementById("gameOverText").style.visibility = "hidden";
         document.getElementById("levelCompleteText").style.visibility = "hidden";
         startGame = true;
@@ -504,7 +510,7 @@ function landedOnFinish() {
             document.getElementById("levelComplete").style.visibility = "visible";
             setTimeout(function () {
                 document.getElementById("level").style.visibility = "hidden";
-                document.getElementById("start").style.visibility = "visible";
+                //document.getElementById("start").style.visibility = "visible";
 
                 for (var i = 0; i < placeHolders.length; i++) {
                     scene.remove(placeHolders[i]);
@@ -558,7 +564,7 @@ function render() {
                     // if no lives left, show Game Over and Start text and hide Level
                     setTimeout(function () {
                         document.getElementById("level").style.visibility = "hidden";
-                        document.getElementById("start").style.visibility = "visible";
+                        //document.getElementById("start").style.visibility = "visible";
                         document.getElementById("gameOverText").style.visibility = "visible";
                     }, 1000);
                 }
@@ -584,7 +590,7 @@ function render() {
                 if (lives == 0) {
                     setTimeout(function () {
                         document.getElementById("level").style.visibility = "hidden";
-                        document.getElementById("start").style.visibility = "visible";
+                        //document.getElementById("start").style.visibility = "visible";
                         document.getElementById("gameOverText").style.visibility = "visible";
                     }, 1000);
                 }
@@ -603,9 +609,7 @@ function render() {
     }
     renderer.render(scene, camera);
 }
-//render();
 setInterval(function(){requestAnimationFrame(render);}, 10);
-
 
 function animatechickenDeath() {
     chicken.position.z -= 0.1;
