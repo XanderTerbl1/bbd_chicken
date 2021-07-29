@@ -5,6 +5,7 @@ const input = {
     MOVE_BACKWARD: 4,
     MOVE_LEFT: 2,
     MOVE_RIGHT: 1,
+    WAIT: 5,
 }
 
 function control(input) {
@@ -429,6 +430,116 @@ class ClosestRightBlock extends Block {
     }
 }
 
+class LevelOneConditionalBlock extends Block {
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block conditional-block`);
+        html.textContent = "IN LEVEL ONE";
+        return html;
+    }
+
+    run() {
+        console.log("running level 1 conditional: " + this.id);
+        return getLevel() === 1;
+    }
+
+    find(id) {
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
+
+class LevelTwoConditionalBlock extends Block {
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block conditional-block`);
+        html.textContent = "IN LEVEL TWO";
+        return html;
+    }
+
+    run() {
+        console.log("running level 2 conditional: " + this.id);
+        return getLevel() === 2;
+    }
+
+    find(id) {
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
+
+class LevelThreeConditionalBlock extends Block {
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block conditional-block`);
+        html.textContent = "IN LEVEL THREE";
+        return html;
+    }
+
+    run() {
+        console.log("running level 3 conditional: " + this.id);
+        return getLevel() === 3;
+    }
+
+    find(id) {
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
+
+class LevelFourConditionalBlock extends Block {
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block conditional-block`);
+        html.textContent = "IN LEVEL FOUR";
+        return html;
+    }
+
+    run() {
+        console.log("running level 4 conditional: " + this.id);
+        return getLevel() === 4;
+    }
+
+    find(id) {
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
+
+class LevelFiveConditionalBlock extends Block {
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block conditional-block`);
+        html.textContent = "IN LEVEL FIVE";
+        return html;
+    }
+
+    run() {
+        console.log("running level 5 conditional: " + this.id);
+        return getLevel() === 5;
+    }
+
+    find(id) {
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
+
 class BlankConditionalBlock extends Block {
     constructor(parentID) {
         super();
@@ -653,15 +764,39 @@ class MoveRight extends Block {
     }
 }
 
-function blockIsProgramBlock(block) {
-    return block instanceof ProgramBlock;
+class MoveWait extends Block {
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block move-block`);
+        html.textContent = "WAIT";
+        html.setAttribute("draggable", 'true');
+        let blockId = this.id;
+        html.addEventListener("dragstart", function (event) {
+            startDrag(event, "solution", blockId)
+        });
+        return html;
+    }
+
+    run() {
+        console.log("running waitt: " + this.id);
+        control(input.WAIT);
+    }
+
+    find(id) {
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
 }
 
 function blockIsConditional(block) {
-    return block instanceof TrueConditional || block instanceof FalseConditional || 
-    block instanceof BlankConditionalBlock || block instanceof ClosestFrontBlock ||
-    block instanceof ClosestBackBlock || block instanceof ClosestLeftBlock ||
-    block instanceof ClosestRightBlock;
+    return block.makeHtml().getAttribute("class") === "block conditional-block";
+    // return block instanceof TrueConditional || block instanceof FalseConditional || 
+    // block instanceof BlankConditionalBlock || block instanceof ClosestFrontBlock ||
+    // block instanceof ClosestBackBlock || block instanceof ClosestLeftBlock ||
+    // block instanceof ClosestRightBlock;
 }
 
 function blockAcceptsConditional(block) {
@@ -669,7 +804,7 @@ function blockAcceptsConditional(block) {
 }
 
 function addToProgramBlock(id, block) {
-    if (blockIsConditional(block) || blockIsProgramBlock(block)) {
+    if (blockIsConditional(block) || block instanceof ProgramBlock) {
         console.log("Second parameter of method 'addToProgramBlock' must be an ID of a non-conditional, non-program block type.")
         return 0;
     }
@@ -727,12 +862,12 @@ function updateConditionalBlock(id, block) {
 
 function removeFromProgBlock(id) {
     let block = main.find(id);
-    if (blockIsConditional(block) || blockIsProgramBlock(block)) {
+    if (blockIsConditional(block) || block instanceof ProgramBlock) {
         console.log("First parameter of method 'removeFromProgBlock' must be an ID of a non-conditional, non-program block type.")
         return 0;
     }
     let progBlock = main.find(block.parentID);
-    if (!blockIsProgramBlock(progBlock)) {
+    if (!(block instanceof ProgramBlock)) {
         console.log("Logic error from method 'removeFromProgBlock' - block parent ID not initialized correctly.")
         return 0;
     }
@@ -768,10 +903,16 @@ const toolbox_tools = {
     "CLOSEST_BACK": ClosestBackBlock,
     "CLOSEST_LEFT": ClosestLeftBlock,
     "CLOSEST_RIGHT": ClosestRightBlock,
+    "LEVEL_ONE": LevelOneConditionalBlock,
+    "LEVEL_TWO": LevelTwoConditionalBlock,
+    "LEVEL_THREE": LevelThreeConditionalBlock,
+    "LEVEL_FOUR": LevelFourConditionalBlock,
+    "LEVEL_FIVE": LevelFiveConditionalBlock,
     "MOVE_FORWARD": MoveForward,
     "MOVE_BACKWARD": MoveBackward,
     "MOVE_LEFT": MoveLeft,
     "MOVE_RIGHT": MoveRight,
+    "MOVE_WAIT": MoveWait,
 }
 
 function startDrag(event, from, id) {
@@ -804,7 +945,7 @@ function dragToolboxToSolution(toolbox_type, solution_dest_id) {
     console.log(`Attempting to add new ${toolbox_type} to block id ${solution_dest_id}`)
     let block = new toolbox_tools[toolbox_type]();
 
-    if (["TRUE", "FALSE", "CLOSEST_FRONT", "CLOSEST_BACK", "CLOSEST_LEFT", "CLOSEST_RIGHT"].includes(toolbox_type)) {
+    if (blockIsConditional(block)) {
         updateConditionalBlock(parseInt(solution_dest_id), block);
     } else {
         addToProgramBlock(parseInt(solution_dest_id), block);
