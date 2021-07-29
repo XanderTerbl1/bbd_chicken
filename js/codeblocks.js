@@ -867,7 +867,7 @@ function removeFromProgBlock(id) {
         return 0;
     }
     let progBlock = main.find(block.parentID);
-    if (!(block instanceof ProgramBlock)) {
+    if (!(progBlock instanceof ProgramBlock)) {
         console.log("Logic error from method 'removeFromProgBlock' - block parent ID not initialized correctly.")
         return 0;
     }
