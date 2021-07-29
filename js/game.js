@@ -424,14 +424,15 @@ function findClosestDirec()
     var closestCar = findClosest(false);
     if(closestCar != null)
     {
-        if(closestCar.position.x > chicken.position.x)
-            return 1;
-        else if(closestCar.position.x < chicken.position.x)
-            return 2;
-        else if(closestCar.position.y > chicken.position.y)
+        if(closestCar.position.y > chicken.position.y)
             return 3;
         else if(closestCar.position.y < chicken.position.y)
             return 4;
+        else if(closestCar.position.x > chicken.position.x)
+            return 1;
+        else if(closestCar.position.x < chicken.position.x)
+            return 2;
+        
     }
 
     return -1;
