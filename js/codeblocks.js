@@ -38,7 +38,8 @@ function runSolution() {
 
 function resetSolution(){
     main = new ProgramBlock();
-    addToProgramBlock(main.id, new MoveForward());
+    main.setParent(-1);
+    addToProgramBlock(main.id, new BlankProgramBlock(main.id));
     updateHtmlView();
 }
 
@@ -188,61 +189,63 @@ class IfBlock extends Block {
     }
 }
 
-// class IfElseBlock extends Block {
-//     constructor() {
-//         super();
-//         this.conditionalBlock = new BlankConditionalBlock(this.id);
-//         this.trueProgramBlock = new BlankProgramBlock(this.id);
-//         this.falseProgramBlock = new BlankProgramBlock(this.id, false);
-//     }
+class IfElseBlock extends Block {
+    constructor() {
+        super();
+        this.conditionalBlock = new BlankConditionalBlock(this.id);
+        this.programBlocks = [new BlankProgramBlock(this.id), new BlankProgramBlock(this.id)];
+    }
 
-//     makeHtml() {
-//         let html = document.createElement("div");
-//                 html.setAttribute("data-block-id", this.id);;
-//         html.setAttribute("class", `block if-else-block`);
-//         
-//         html.textContent = "IF "
-//         html.appendChild(this.conditionalBlock.makeHtml())
-//         html.appendChild(this.trueProgramBlock.makeHtml())
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("data-block-id", this.id);;
+        html.setAttribute("class", `block if-else-block`);
+        html.textContent = "IF "
+        html.appendChild(this.conditionalBlock.makeHtml())
+        html.appendChild(this.programBlocks[0].makeHtml())
+        let elseDiv = document.createElement("div");
+        elseDiv.textContent = "ELSE "
+        html.appendChild(elseDiv);
+        html.appendChild(this.programBlocks[1].makeHtml())
+        html.setAttribute("draggable", 'true');
+        let blockId = this.id;
+        html.addEventListener("dragstart", function (event) {
+            startDrag(event, "solution", blockId)
+        });
+        return this.addCommonHtml(html);
+    }
 
-//         let elseDiv = document.createElement("div");
-//         elseDiv.textContent = "ELSE "
-//         html.appendChild(elseDiv);
-//         html.appendChild(this.falseProgramBlock.makeHtml())
-//         return html;
-//     }
+    run() {
+        console.log("running  if else: " + this.id);
+        if (this.conditionalBlock.run()) {
+            this.programBlocks[0].run();
+        } else {
+            this.programBlocks[1].run();
+        }
+    }
 
-//     run() {
-//         console.log("running  if else: " + this.id);
-//         if (this.conditionalBlock.run()) {
-//             this.trueProgramBlock.run();
-//         } else {
-//             this.falseProgramBlock.run();
-//         }
-//     }
+    find(id) {
+        // console.log("searching if/else: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
 
-//     find(id) {
-//         // console.log("searching if/else: " + this.id)
-//         if (this.id === id) {
-//             return this;
-//         }
+        let found = this.conditionalBlock.find(id);
+        if (found !== null) {
+            return found;
+        }
+        found = this.programBlocks[0].find(id);
+        if (found !== null) {
+            return found;
+        }
+        found = this.programBlocks[1].find(id);
+        if (found !== null) {
+            return found;
+        }
 
-//         let found = this.conditionalBlock.find(id);
-//         if (found !== null) {
-//             return found;
-//         }
-//         found = this.trueProgramBlock.find(id);
-//         if (found !== null) {
-//             return found;
-//         }
-//         found = this.falseProgramBlock.find(id);
-//         if (found !== null) {
-//             return found;
-//         }
-
-//         return null;
-//     }
-// }
+        return null;
+    }
+}
 
 class TrueConditional extends Block {
     makeHtml() {
@@ -521,8 +524,7 @@ function blockIsConditional(block) {
 }
 
 function blockAcceptsConditional(block) {
-    // return block instanceof IfBlock || block instanceof IfElseBlock;
-    return block instanceof IfBlock;
+    return block instanceof IfBlock || block instanceof IfElseBlock;
 }
 
 function addToProgramBlock(id, block) {
@@ -535,19 +537,27 @@ function addToProgramBlock(id, block) {
         console.log("First parameter of method 'addToProgramBlock' must be an ID of a non-conditional block type.")
         return 0;
     }
-    console.log(id)
     if (prevBlock.parentID === -1) {//adding on line 1
-        block.setParent(1);
+        block.setParent(main.id);
         main.blocks.unshift(block);
         updateHtmlView();
         return 1;
     }
     let parent = main.find(prevBlock.parentID);
-
     if (prevBlock instanceof BlankProgramBlock) {
-        parent.programBlock = new ProgramBlock();
-        parent.programBlock.setParent(prevBlock.parentID);
-        parent.programBlock.addBlock(block);
+        if (parent.parentID === -1) {//restarting after solutions reset
+            parent.blocks.pop();
+            parent.addBlock(block);
+        } else if (parent instanceof IfElseBlock) {
+            let pos = parent.programBlocks.indexOf(prevBlock);
+            parent.programBlocks[pos] = new ProgramBlock();
+            parent.programBlocks[pos].setParent(prevBlock.parentID);
+            parent.programBlocks[pos].addBlock(block);
+        } else {
+            parent.programBlock = new ProgramBlock();
+            parent.programBlock.setParent(prevBlock.parentID);
+            parent.programBlock.addBlock(block);
+        }
     } else {
         let pos = parent.blocks.indexOf(prevBlock);
         block.setParent(prevBlock.parentID);
@@ -580,9 +590,8 @@ function removeFromProgBlock(id) {
         console.log("First parameter of method 'removeFromProgBlock' must be an ID of a non-conditional, non-program block type.")
         return 0;
     }
-    let progBlock = main.find(parseInt(block.parentID));
+    let progBlock = main.find(block.parentID);
     if (!blockIsProgramBlock(progBlock)) {
-        console.log(progBlock)
         console.log("Logic error from method 'removeFromProgBlock' - block parent ID not initialized correctly.")
         return 0;
     }
@@ -606,6 +615,7 @@ function tempAddMoveForward() {
 // All code-blocks the user has access to
 const toolbox_tools = {
     "IF_BLOCK": IfBlock,
+    "IF_ELSE_BLOCK": IfElseBlock,
     "TRUE": TrueConditional,
     "FALSE": FalseConditional,
     "MOVE_FORWARD": MoveForward,
