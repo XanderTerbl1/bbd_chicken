@@ -29,12 +29,11 @@ window.addEventListener('load', function () {
     addToProgramBlock(1, new MoveForward());
     addToProgramBlock(2, new MoveForward());
     updateHtmlView();
-
-    // control(input.START_GAME);
 })
 
 // Runs the solution recursivley
 function runSolution() {
+    control(input.START_GAME);
     main.run();
 }
 
