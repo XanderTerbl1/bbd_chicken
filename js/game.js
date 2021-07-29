@@ -1,6 +1,6 @@
 //Const level params
 const WIDTH = 40;
-const INCREMENT_SPEED = 0.025;
+const INCREMENT_SPEED = 0.020;
 const TOTAL_LEVELS = 5;
 const MAX_LIVES = 1;
 const resetEvent = new Event("resetEvent");
