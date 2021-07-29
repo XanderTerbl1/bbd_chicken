@@ -29,12 +29,11 @@ window.addEventListener('load', function () {
     addToProgramBlock(1, new MoveForward());
     addToProgramBlock(2, new MoveForward());
     updateHtmlView();
-
-    control(input.START_GAME);
 })
 
 // Runs the solution recursivley
 function runSolution() {
+    control(input.START_GAME);
     main.run();
 }
 
@@ -82,6 +81,10 @@ function onDrop(event) {
     // add other source-destination pairs
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 class Block {
     constructor() {
         this.id = getBlockId();
@@ -97,9 +100,12 @@ class Block {
     }
 
     // virtual functions               
-    run() { }
+    async run() { 
+        await sleep(400);        
+    }
     makeHtml() { }
 }
+
 
 class ProgramBlock extends Block {
     constructor() {
@@ -107,11 +113,12 @@ class ProgramBlock extends Block {
         this.blocks = []
     }
 
-    run() {
+    async run() {
+        await super.run();
         console.log("running  program: " + this.id);
-        this.blocks.forEach(b => {
-            b.run();
-        });
+        for (let i = 0; i < this.blocks.length; i++) {
+            await this.blocks[i].run();
+        }
     }
 
     find(id) {
@@ -270,12 +277,10 @@ class WhileBlock extends Block {
         return this.addCommonHtml(html);
     }
 
-    run() {
+    async run() {
         console.log("running  while: " + this.id);
-        if (this.conditionalBlock.run()) {
-            for (let i = 0; i < 6; i++) {
-                this.programBlock.run();
-            }
+        while (this.conditionalBlock.run()) {
+            await this.programBlock.run();
         }
     }
 
@@ -674,6 +679,7 @@ class BlankProgramBlock extends Block {
 //     }
 // }
 
+
 class MoveForward extends Block {
     makeHtml() {
         let html = document.createElement("div");
@@ -688,8 +694,9 @@ class MoveForward extends Block {
         return html;
     }
 
-    run() {
-        console.log("running move forward: " + this.id);
+
+    async run() {
+        await super.run();
         control(input.MOVE_FORWARD);
     }
 
@@ -948,9 +955,9 @@ function populateToolbox() {
     let toolbox = document.getElementById("toolbox");
     toolbox.innerHTML = "";
     for (const key in toolbox_tools) {
-        let tool = document.createElement("div");
+        let tool = document.createElement("span");
         tool.setAttribute("data-block-type", key);
-        tool.setAttribute("class", `toolbox-block`);
+        tool.setAttribute("class", `toolbox-block tb-${key}`);
         tool.setAttribute("draggable", 'true');
         tool.addEventListener("dragstart", function (event) {
             startDrag(event, "toolbox", key)
@@ -985,10 +992,3 @@ function dragSolutionToSolution(solution_obj, solution_dest) {
     // remove from soluto
 }
 
-// TODO
-// Add drop on toolbox -> drops are remove/
-// make everything draggable that requires it
-// Add allowDrop and ondrop where needed (program block and ?)
-
-
-// Initialisations
