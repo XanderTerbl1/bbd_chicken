@@ -83,10 +83,9 @@ class Block {
 }
 
 class ProgramBlock extends Block {
-    constructor(left = true) {
+    constructor() {
         super();
         this.blocks = []
-        this.left = left;
     }
 
     run() {
@@ -114,7 +113,6 @@ class ProgramBlock extends Block {
         let html = document.createElement("div");
         html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block program-block`);
-        html.setAttribute("parent-id", this.parentID);
         this.blocks.forEach(b => {
             html.appendChild(b.makeHtml());
         });
@@ -143,8 +141,7 @@ class IfBlock extends Block {
         let html = document.createElement("div");
         html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block if-block`);
-        html.setAttribute("parent-id", this.parentID);
-
+        
         html.textContent = "IF "
         html.appendChild(this.conditionalBlock.makeHtml())
         html.appendChild(this.programBlock.makeHtml())
@@ -189,8 +186,7 @@ class IfBlock extends Block {
 //         let html = document.createElement("div");
 //                 html.setAttribute("data-block-id", this.id);;
 //         html.setAttribute("class", `block if-else-block`);
-//         html.setAttribute("parent-id", this.parentID);
-
+//         
 //         html.textContent = "IF "
 //         html.appendChild(this.conditionalBlock.makeHtml())
 //         html.appendChild(this.trueProgramBlock.makeHtml())
@@ -239,7 +235,6 @@ class TrueConditional extends Block {
         let html = document.createElement("span");
         html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block conditional-block`);
-        html.setAttribute("parent-id", this.parentID);
         html.textContent = "TRUE"
         return html;
     }
@@ -263,7 +258,6 @@ class FalseConditional extends Block {
         let html = document.createElement("span");
         html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block conditional-block`);
-        html.setAttribute("parent-id", this.parentID);
         html.textContent = "FALSE"
         return html;
     }
@@ -309,10 +303,9 @@ class BlankConditionalBlock extends Block {
 }
 
 class BlankProgramBlock extends Block {
-    constructor(parentID, left = true) {
+    constructor(parentID) {
         super();
         this.parentID = parentID;
-        this.left = left;
     }
     makeHtml() {
         let html = document.createElement("div");
@@ -346,7 +339,6 @@ class BlankProgramBlock extends Block {
 //         let html = document.createElement("div");
 //         html.setAttribute("data-block-id", this.id);
 //         html.setAttribute("class", `block function-def-block`)
-//         html.setAttribute("parent-id", this.parentID);
 //         html.textContent = "NEW FUNCTION " + this.funcName
 //         html.appendChild(this.programBlock.makeHtml())
 //         return html;
@@ -379,7 +371,6 @@ class BlankProgramBlock extends Block {
 //         let html = document.createElement("div")
 //         html.setAttribute("data-block-id", this.id);
 //         html.setAttribute("class", `block function-call-block`)
-//         html.setAttribute("parent-id", this.parentID);
 //         html.textContent = "EXECUTE FUNCTION " + this.funcName
 //         return html;
 //     }
@@ -405,7 +396,6 @@ class MoveBlock extends Block {
         let html = document.createElement("div");
         html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block move-block`);
-        html.setAttribute("parent-id", this.parentID);
         switch (this.direction) {
             case input.MOVE_LEFT:
                 html.textContent = "MOVE LEFT";
@@ -459,7 +449,6 @@ class MoveBlock extends Block {
 //         let html = document.createElement("div");
 //                 html.setAttribute("data-block-id", this.id);;
 //         html.setAttribute("class", `block move-block`);
-//         html.setAttribute("parent-id", this.parentID);
 //         html.textContent = "MOVE BACKWARD"
 //         return html;
 //     }
@@ -483,7 +472,6 @@ class MoveBlock extends Block {
 //         let html = document.createElement("div");
 //                 html.setAttribute("data-block-id", this.id);;
 //         html.setAttribute("class", `block move-block`);
-//         html.setAttribute("parent-id", this.parentID);
 //         html.textContent = "MOVE LEFT"
 //         return html;
 //     }
@@ -507,7 +495,6 @@ class MoveBlock extends Block {
 //         let html = document.createElement("div");
 //                 html.setAttribute("data-block-id", this.id);;
 //         html.setAttribute("class", `block move-block`);
-//         html.setAttribute("parent-id", this.parentID);
 //         html.textContent = "MOVE RIGHT"
 //         return html;
 //     }
@@ -549,6 +536,7 @@ function addToProgramBlock(id, block) {
         console.log("First parameter of method 'addToProgramBlock' must be an ID of a non-conditional block type.")
         return 0;
     }
+    console.log(id)
     if (prevBlock.parentID === -1) {//adding on line 1
         block.setParent(1);
         main.blocks.unshift(block);
@@ -592,7 +580,7 @@ function removeFromProgBlock(id) {
         console.log("First parameter of method 'removeFromProgBlock' must be an ID of a non-conditional, non-program block type.")
         return 0;
     }
-    let progBlock = main.find(parseInt(block.makeHtml().getAttribute("parent-id")));
+    let progBlock = main.find(parseInt(block.parentID));
     if (!blockIsProgramBlock(progBlock)) {
         console.log(progBlock)
         console.log("Logic error from method 'removeFromProgBlock' - block parent ID not initialized correctly.")
@@ -612,7 +600,7 @@ function removeFromProgBlock(id) {
 function tempAddMoveForward() {
     main.addBlock(new MoveBlock(input.MOVE_FORWARD));
     updateHtmlView();
-    
+
 }
 
 // All code-blocks the user has access to
