@@ -25,7 +25,7 @@
       <tbody>
         <tr>
           <th scope="row"># Score</th>
-          <td id="score">0</td>
+          <td id="num_score">0</td>
         </tr>
         <tr>
           <th># blocks</th>
@@ -41,6 +41,17 @@
         </tr>
       </tbody>
     </table>
-    <script src="/js/game.js"></script>
+    <script>
+      setInterval(() => {
+        document.getElementById("num_score").innerHTML =
+          localStorage.getItem("score");
+        document.getElementById("num_blocks").innerHTML =
+          localStorage.getItem("blocks");
+        document.getElementById("num_cond").innerHTML =
+          localStorage.getItem("conditional");
+        document.getElementById("num_loops").innerHTML =
+          localStorage.getItem("loops");
+      }, 5000);
+    </script>
   </body>
 </html>
