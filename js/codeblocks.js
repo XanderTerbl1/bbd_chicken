@@ -29,7 +29,7 @@ window.addEventListener('load', function () {
     addToProgramBlock(2, new MoveForward());
     updateHtmlView();
 
-    control(input.START_GAME);
+    // control(input.START_GAME);
 })
 
 // Runs the solution recursivley
@@ -101,7 +101,7 @@ class Block {
 
     // virtual functions               
     async run() { 
-        await sleep(500);        
+        await sleep(400);        
     }
     makeHtml() { }
 }
@@ -791,9 +791,9 @@ function populateToolbox() {
     let toolbox = document.getElementById("toolbox");
     toolbox.innerHTML = "";
     for (const key in toolbox_tools) {
-        let tool = document.createElement("div");
+        let tool = document.createElement("span");
         tool.setAttribute("data-block-type", key);
-        tool.setAttribute("class", `toolbox-block`);
+        tool.setAttribute("class", `toolbox-block tb-${key}`);
         tool.setAttribute("draggable", 'true');
         tool.addEventListener("dragstart", function (event) {
             startDrag(event, "toolbox", key)
