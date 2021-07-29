@@ -430,6 +430,29 @@ class ClosestRightBlock extends Block {
     }
 }
 
+class ClosestDistanceBlock extends Block {
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block conditional-block`);
+        html.textContent = "CAR REALLY CLOSE";
+        return html;
+    }
+
+    run() {
+        console.log("running closest distance conditional: " + this.id);
+        let dist = findClosestDist();
+        return findClosestDist() <= 3.5;
+    }
+
+    find(id) {
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
+
 class LevelOneConditionalBlock extends Block {
     makeHtml() {
         let html = document.createElement("span");
@@ -903,6 +926,7 @@ const toolbox_tools = {
     "CLOSEST_BACK": ClosestBackBlock,
     "CLOSEST_LEFT": ClosestLeftBlock,
     "CLOSEST_RIGHT": ClosestRightBlock,
+    "CLOSEST_DISTANCE": ClosestDistanceBlock,
     "LEVEL_ONE": LevelOneConditionalBlock,
     "LEVEL_TWO": LevelTwoConditionalBlock,
     "LEVEL_THREE": LevelThreeConditionalBlock,
