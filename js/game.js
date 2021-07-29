@@ -148,9 +148,19 @@ var justFinished = false;
 var placeHolders = [];
 var score = 0, tempScore = 0;
 
-function resetGame()
+function resetLevel()
 {
-    gameOver = true;
+    scene.remove(chicken);
+    chicken.position.x = 0;
+    chicken.position.y = 0;
+    chicken.position.z = -10;
+    chicken.rotation.y = Math.PI;
+    scene.add(chicken);
+    document.getElementById("level").style.visibility = "hidden";
+
+    document.dispatchEvent(resetEvent);
+    tempScore = 0;
+    score = 0;
 }
 
 // Initializes on new level reset after death
