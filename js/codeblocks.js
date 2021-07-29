@@ -28,6 +28,10 @@ window.addEventListener('load', function () {
     main.setParent(-1);
     addToProgramBlock(1, new MoveForward());
     addToProgramBlock(2, new MoveForward());
+    addToProgramBlock(3, new MoveForward());
+    addToProgramBlock(4, new MoveForward());
+    addToProgramBlock(5, new MoveForward());
+    addToProgramBlock(6, new MoveForward());
     updateHtmlView();
 })
 
@@ -620,65 +624,67 @@ class BlankProgramBlock extends Block {
     }
 }
 
-// let funcs = {};
-// class FunctionDefinitionBlock extends Block {
-//     constructor(funcName) {
-//         super();
-//         this.funcName = funcName;
-//         this.programBlock = new ProgramBlock();
-//     }
+funcs = [];
+class FunctionDefinitionBlock extends Block {
+    constructor() {
+        super();
+        this.programBlock = new BlankProgramBlock(this.id);
+    }
 
-//     makeHtml() {
-//         let html = document.createElement("div");
-//         html.setAttribute("data-block-id", this.id);
-//         html.setAttribute("class", `block function-def-block`)
-//         html.textContent = "NEW FUNCTION " + this.funcName
-//         html.appendChild(this.programBlock.makeHtml())
-//         return html;
-//     }
-//     run() {
-//         console.log("running  function def: " + this.id)
-//         funcs[this.funcName] = this.programBlock;//null error check required
-//     }
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("class", `block function-block`);
+        html.textContent = "NEW FUNCTION "
+        html.appendChild(this.programBlock.makeHtml())
+        html.setAttribute("draggable", 'true');
+        let blockId = this.id;
+        html.addEventListener("dragstart", function (event) {
+            startDrag(event, "solution", blockId)
+        });
+        return this.addCommonHtml(html);
+    }
+    run() {
+        console.log("running function def: " + this.id)
+        funcs.push(this.programBlock);
+    }
 
-//     find(id) {
-//         // console.log("searching func def: " + this.id)
-//         if (this.id === id) {
-//             return this;
-//         }
-//         let found = this.programBlock.find(id);
-//         if (found !== null) {
-//             return found;
-//         }
-//         return null;
-//     }
-// }
+    find(id) {
+        // console.log("searching func def: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        let found = this.programBlock.find(id);
+        if (found !== null) {
+            return found;
+        }
+        return null;
+    }
+}
 
-// class FunctionCallBlock extends Block {
-//     constructor(funcName) {
-//         super();
-//         this.funcName = funcName;
-//     }
-
-//     makeHtml() {
-//         let html = document.createElement("div")
-//         html.setAttribute("data-block-id", this.id);
-//         html.setAttribute("class", `block function-call-block`)
-//         html.textContent = "EXECUTE FUNCTION " + this.funcName
-//         return html;
-//     }
-//     run() {
-//         console.log("running  function call: " + this.id)
-//         funcs[this.funcName].run();
-//     }
-//     find(id) {
-//         // console.log("searching func call: " + this.id)
-//         if (this.id === id) {
-//             return this;
-//         }
-//         return null;
-//     }
-// }
+class FunctionCallBlock extends Block {
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("class", `block function-block`);
+        html.textContent = "RUN FUNCTION "
+        html.setAttribute("draggable", 'true');
+        let blockId = this.id;
+        html.addEventListener("dragstart", function (event) {
+            startDrag(event, "solution", blockId)
+        });
+        return this.addCommonHtml(html);
+    }
+    run() {
+        console.log("running  function call: " + this.id)
+        funcs[funcs.length-1].run();
+    }
+    find(id) {
+        // console.log("searching func call: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
 
 
 class MoveForward extends Block {
@@ -945,6 +951,8 @@ const toolbox_tools = {
     "MOVE_LEFT": MoveLeft,
     "MOVE_RIGHT": MoveRight,
     "MOVE_WAIT": MoveWait,
+    "FUNCTION_DEFINITION": FunctionDefinitionBlock,
+    "RUN_FUNCTION": FunctionCallBlock,
 }
 
 function startDrag(event, from, id) {
