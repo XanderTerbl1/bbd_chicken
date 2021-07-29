@@ -28,11 +28,12 @@ window.addEventListener('load', function () {
     addToProgramBlock(1, new MoveForward());
     addToProgramBlock(2, new MoveForward());
     updateHtmlView();
+
+    control(input.START_GAME);
 })
 
 // Runs the solution recursivley
 function runSolution() {
-    control(input.START_GAME);
     main.run();
 }
 
@@ -346,6 +347,94 @@ class FalseConditional extends Block {
     }
 }
 
+class ClosestFrontBlock extends Block {
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block conditional-block`);
+        html.textContent = "CLOSEST CAR IS AHEAD";
+        return html;
+    }
+
+    run() {
+        console.log("running closest in front conditional: " + this.id);
+        return findClosestDirec() === input.MOVE_FORWARD;
+    }
+
+    find(id) {
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
+
+class ClosestBackBlock extends Block {
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block conditional-block`);
+        html.textContent = "CLOSEST CAR IS BEHIND";
+        return html;
+    }
+
+    run() {
+        console.log("running closest behind conditional: " + this.id);
+        return findClosestDirec() === input.MOVE_BACKWARD;
+    }
+
+    find(id) {
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
+
+class ClosestLeftBlock extends Block {
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block conditional-block`);
+        html.textContent = "CLOSEST CAR IS LEFT";
+        return html;
+    }
+
+    run() {
+        console.log("running closest left conditional: " + this.id);
+        return findClosestDirec() === input.MOVE_LEFT;
+    }
+
+    find(id) {
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
+
+class ClosestRightBlock extends Block {
+    makeHtml() {
+        let html = document.createElement("span");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block conditional-block`);
+        html.textContent = "CLOSEST CAR RIGHT";
+        return html;
+    }
+
+    run() {
+        console.log("running closest right conditional: " + this.id);
+        return findClosestDirec() === input.MOVE_RIGHT;
+    }
+
+    find(id) {
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
+
 class BlankConditionalBlock extends Block {
     constructor(parentID) {
         super();
@@ -577,7 +666,10 @@ function blockIsProgramBlock(block) {
 }
 
 function blockIsConditional(block) {
-    return block instanceof TrueConditional || block instanceof FalseConditional || block instanceof BlankConditionalBlock;
+    return block instanceof TrueConditional || block instanceof FalseConditional || 
+    block instanceof BlankConditionalBlock || block instanceof ClosestFrontBlock ||
+    block instanceof ClosestBackBlock || block instanceof ClosestLeftBlock ||
+    block instanceof ClosestRightBlock;
 }
 
 function blockAcceptsConditional(block) {
@@ -652,6 +744,10 @@ function removeFromProgBlock(id) {
         console.log("Logic error from method 'removeFromProgBlock' - block parent ID not initialized correctly.")
         return 0;
     }
+    if (main.blocks.length === 1) {//remove only block
+        resetSolution();
+        return 1;
+    }
     if (progBlock.blocks.length === 1) {
         let parent = main.find(progBlock.parentID);
         parent.programBlock = new BlankProgramBlock(progBlock.parentID);
@@ -676,6 +772,10 @@ const toolbox_tools = {
     "WHILE": WhileBlock,
     "TRUE": TrueConditional,
     "FALSE": FalseConditional,
+    "CLOSEST_FRONT": ClosestFrontBlock,
+    "CLOSEST_BACK": ClosestBackBlock,
+    "CLOSEST_LEFT": ClosestLeftBlock,
+    "CLOSEST_RIGHT": ClosestRightBlock,
     "MOVE_FORWARD": MoveForward,
     "MOVE_BACKWARD": MoveBackward,
     "MOVE_LEFT": MoveLeft,
@@ -712,7 +812,7 @@ function dragToolboxToSolution(toolbox_type, solution_dest_id) {
     console.log(`Attempting to add new ${toolbox_type} to block id ${solution_dest_id}`)
     let block = new toolbox_tools[toolbox_type]();
 
-    if (["TRUE", "FALSE"].includes(toolbox_type)) {
+    if (["TRUE", "FALSE", "CLOSEST_FRONT", "CLOSEST_BACK", "CLOSEST_LEFT", "CLOSEST_RIGHT"].includes(toolbox_type)) {
         updateConditionalBlock(parseInt(solution_dest_id), block);
     } else {
         addToProgramBlock(parseInt(solution_dest_id), block);
