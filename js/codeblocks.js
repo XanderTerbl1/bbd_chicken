@@ -15,7 +15,7 @@ function control(input) {
 
 let main;
 let solution_div;
-window.addEventListener('load', function () {    
+window.addEventListener('load', function () {
     // Initialisations
     main = new ProgramBlock();
 
@@ -36,7 +36,7 @@ function runSolution() {
     main.run();
 }
 
-function resetSolution(){
+function resetSolution() {
     main = new ProgramBlock();
     main.setParent(-1);
     addToProgramBlock(main.id, new BlankProgramBlock(main.id));
@@ -72,7 +72,7 @@ function onDrop(event) {
 
     // dragged from solution to toolbox
     let toolbox_drop = event.target.hasAttribute("data-block-type") || (event.target.id == "toolbox")
-    if (data.from == "solution" && toolbox_drop){
+    if (data.from == "solution" && toolbox_drop) {
         console.log("removing solution block (dropped in toolbox)")
         dragSolutionToToolbox(data.id);
     }
@@ -89,8 +89,8 @@ class Block {
         this.parentID = parentID;
     }
 
-    addCommonHtml(element){        
-        element.setAttribute("data-block-id", this.id);        
+    addCommonHtml(element) {
+        element.setAttribute("data-block-id", this.id);
         return element;
     }
 
@@ -127,11 +127,11 @@ class ProgramBlock extends Block {
     }
 
     makeHtml() {
-        let html = document.createElement("div");        
+        let html = document.createElement("div");
         html.setAttribute("class", `block program-block`);
         this.blocks.forEach(b => {
             html.appendChild(b.makeHtml());
-        });                        
+        });
         return this.addCommonHtml(html);
     }
 
@@ -239,6 +239,55 @@ class IfElseBlock extends Block {
             return found;
         }
         found = this.programBlocks[1].find(id);
+        if (found !== null) {
+            return found;
+        }
+
+        return null;
+    }
+}
+
+class WhileBlock extends Block {
+    constructor() {
+        super();
+        this.conditionalBlock = new BlankConditionalBlock(this.id);
+        this.programBlock = new BlankProgramBlock(this.id);
+    }
+
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("class", `block if-block`);
+        html.textContent = "WHILE  "
+        html.appendChild(this.conditionalBlock.makeHtml())
+        html.appendChild(this.programBlock.makeHtml())
+        html.setAttribute("draggable", 'true');
+        let blockId = this.id;
+        html.addEventListener("dragstart", function (event) {
+            startDrag(event, "solution", blockId)
+        });
+        return this.addCommonHtml(html);
+    }
+
+    run() {
+        console.log("running  while: " + this.id);
+        if (this.conditionalBlock.run()) {
+            for (let i = 0; i < 6; i++) {
+                this.programBlock.run();
+            }
+        }
+    }
+
+    find(id) {
+        // console.log("searching if: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+
+        let found = this.conditionalBlock.find(id);
+        if (found !== null) {
+            return found;
+        }
+        found = this.programBlock.find(id);
         if (found !== null) {
             return found;
         }
@@ -524,7 +573,7 @@ function blockIsConditional(block) {
 }
 
 function blockAcceptsConditional(block) {
-    return block instanceof IfBlock || block instanceof IfElseBlock;
+    return block instanceof IfBlock || block instanceof IfElseBlock || block instanceof WhileBlock;
 }
 
 function addToProgramBlock(id, block) {
@@ -616,6 +665,7 @@ function tempAddMoveForward() {
 const toolbox_tools = {
     "IF_BLOCK": IfBlock,
     "IF_ELSE_BLOCK": IfElseBlock,
+    "WHILE": WhileBlock,
     "TRUE": TrueConditional,
     "FALSE": FalseConditional,
     "MOVE_FORWARD": MoveForward,
@@ -624,7 +674,7 @@ const toolbox_tools = {
     "MOVE_RIGHT": MoveRight,
 }
 
-function startDrag(event, from, id) {    
+function startDrag(event, from, id) {
     event.dataTransfer.setData("data", JSON.stringify({ "from": from, "id": id }));
 }
 
