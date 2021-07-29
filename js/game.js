@@ -3,9 +3,9 @@ const WIDTH = 40;
 const INCREMENT_SPEED = 0.025;
 const TOTAL_LEVELS = 2;
 const MAX_LIVES = 1;
-const resetEvent = new Event('reset');
-const newBestScore = new Event('newScore');
-localStorage.setItem("score", 0);
+const resetEvent = new Event("resetEvent");
+const newScore = new Event("newScore");
+//localStorage.setItem("score", 0);
 
 //Renderer
 var canvas = document.getElementById("mywebgl");
@@ -158,6 +158,7 @@ function initObjects() {
         level = 1;
         levelsCompleted = 0;
         score = 0;
+        tempScore = 0;
         document.getElementById("start").style.visibility = "hidden";
         document.getElementById("gameOverText").style.visibility = "hidden";
         for (var i = 0; i < placeHolders.length; i++)
@@ -174,7 +175,19 @@ function initObjects() {
         level = 1;
         levelsCompleted = 0;
 
+        //Handle best score
+        var currScore = localStorage.getItem("score");
+        localStorage.clear("score");
+        if(currScore >= score || currScore == 0)
+        {
+            localStorage.setItem("score", score);
+            document.dispatchEvent(newScore);
+        }
+        else
+            localStorage.setItem("score", currScore);
+
         score = 0;
+        tempScore = 0;
         for (var i = 0; i < placeHolders.length; i++)
             scene.remove(placeHolders[i]);
         placeHolders = [];
@@ -207,6 +220,7 @@ function initObjects() {
         chicken.position.z = -10;
         chicken.rotation.y = Math.PI;
         scene.add(chicken);
+        tempScore = 0;
         if (lives > 0 && !justFinished) { }
         else
             justFinished = false;
@@ -502,15 +516,6 @@ function landedOnFinish() {
             }, 2000);
             gameCompleted = true;
             startGame = false;
-
-            //Handle best score
-            var currScore = localStorage.getItem("score");
-            console.log(currScore);
-            if(currScore >= score || currScore == 0)
-            {
-                localStorage.setItem("score", score);
-                document.dispatchEvent(newScore);
-            }
         }
         // Otherwise, just show that user has completed level.
         else {
@@ -534,7 +539,6 @@ function landedOnFinish() {
                 levelsCompleted++;
             }, 2000);
         }
-        tempScore = 0;
         return true;
     }
     return false;

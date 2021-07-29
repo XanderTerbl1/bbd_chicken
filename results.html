@@ -42,6 +42,8 @@
       </tbody>
     </table>
     <script>
+      localStorage.clear("score");
+      localStorage.setItem("score", 0);
       setInterval(() => {
         document.getElementById("num_score").innerHTML =
           localStorage.getItem("score");
@@ -51,7 +53,7 @@
           localStorage.getItem("conditional");
         document.getElementById("num_loops").innerHTML =
           localStorage.getItem("loops");
-      }, 5000);
+      }, 500);
     </script>
   </body>
 </html>

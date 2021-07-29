@@ -8,11 +8,6 @@
   cursor: pointer;
 }
 
-.program-block{
-  min-width: 60px;
-  min-height: 60px;
-}
-
 .btn-reset{
   background-color: darkgoldenrod;
   color: white;

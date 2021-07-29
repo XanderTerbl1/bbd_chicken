@@ -15,7 +15,7 @@ function control(input) {
 
 let main;
 let solution_div;
-window.addEventListener('load', function () {    
+window.addEventListener('load', function () {
     // Initialisations
     main = new ProgramBlock();
 
@@ -36,9 +36,10 @@ function runSolution() {
     main.run();
 }
 
-function resetSolution(){
+function resetSolution() {
     main = new ProgramBlock();
-    addToProgramBlock(main.id, new MoveForward());
+    main.setParent(-1);
+    addToProgramBlock(main.id, new BlankProgramBlock(main.id));
     updateHtmlView();
 }
 
@@ -71,7 +72,7 @@ function onDrop(event) {
 
     // dragged from solution to toolbox
     let toolbox_drop = event.target.hasAttribute("data-block-type") || (event.target.id == "toolbox")
-    if (data.from == "solution" && toolbox_drop){
+    if (data.from == "solution" && toolbox_drop) {
         console.log("removing solution block (dropped in toolbox)")
         dragSolutionToToolbox(data.id);
     }
@@ -88,8 +89,8 @@ class Block {
         this.parentID = parentID;
     }
 
-    addCommonHtml(element){        
-        element.setAttribute("data-block-id", this.id);        
+    addCommonHtml(element) {
+        element.setAttribute("data-block-id", this.id);
         return element;
     }
 
@@ -99,10 +100,9 @@ class Block {
 }
 
 class ProgramBlock extends Block {
-    constructor(left = true) {
+    constructor() {
         super();
         this.blocks = []
-        this.left = left;
     }
 
     run() {
@@ -127,11 +127,11 @@ class ProgramBlock extends Block {
     }
 
     makeHtml() {
-        let html = document.createElement("div");        
+        let html = document.createElement("div");
         html.setAttribute("class", `block program-block`);
         this.blocks.forEach(b => {
             html.appendChild(b.makeHtml());
-        });                        
+        });
         return this.addCommonHtml(html);
     }
 
@@ -189,62 +189,112 @@ class IfBlock extends Block {
     }
 }
 
-// class IfElseBlock extends Block {
-//     constructor() {
-//         super();
-//         this.conditionalBlock = new BlankConditionalBlock(this.id);
-//         this.trueProgramBlock = new BlankProgramBlock(this.id);
-//         this.falseProgramBlock = new BlankProgramBlock(this.id, false);
-//     }
+class IfElseBlock extends Block {
+    constructor() {
+        super();
+        this.conditionalBlock = new BlankConditionalBlock(this.id);
+        this.programBlocks = [new BlankProgramBlock(this.id), new BlankProgramBlock(this.id)];
+    }
 
-//     makeHtml() {
-//         let html = document.createElement("div");
-//                 html.setAttribute("data-block-id", this.id);;
-//         html.setAttribute("class", `block if-else-block`);
-//         html.setAttribute("parent-id", this.parentID);
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("data-block-id", this.id);;
+        html.setAttribute("class", `block if-else-block`);
+        html.textContent = "IF "
+        html.appendChild(this.conditionalBlock.makeHtml())
+        html.appendChild(this.programBlocks[0].makeHtml())
+        let elseDiv = document.createElement("div");
+        elseDiv.textContent = "ELSE "
+        html.appendChild(elseDiv);
+        html.appendChild(this.programBlocks[1].makeHtml())
+        html.setAttribute("draggable", 'true');
+        let blockId = this.id;
+        html.addEventListener("dragstart", function (event) {
+            startDrag(event, "solution", blockId)
+        });
+        return this.addCommonHtml(html);
+    }
 
-//         html.textContent = "IF "
-//         html.appendChild(this.conditionalBlock.makeHtml())
-//         html.appendChild(this.trueProgramBlock.makeHtml())
+    run() {
+        console.log("running  if else: " + this.id);
+        if (this.conditionalBlock.run()) {
+            this.programBlocks[0].run();
+        } else {
+            this.programBlocks[1].run();
+        }
+    }
 
-//         let elseDiv = document.createElement("div");
-//         elseDiv.textContent = "ELSE "
-//         html.appendChild(elseDiv);
-//         html.appendChild(this.falseProgramBlock.makeHtml())
-//         return html;
-//     }
+    find(id) {
+        // console.log("searching if/else: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
 
-//     run() {
-//         console.log("running  if else: " + this.id);
-//         if (this.conditionalBlock.run()) {
-//             this.trueProgramBlock.run();
-//         } else {
-//             this.falseProgramBlock.run();
-//         }
-//     }
+        let found = this.conditionalBlock.find(id);
+        if (found !== null) {
+            return found;
+        }
+        found = this.programBlocks[0].find(id);
+        if (found !== null) {
+            return found;
+        }
+        found = this.programBlocks[1].find(id);
+        if (found !== null) {
+            return found;
+        }
 
-//     find(id) {
-//         // console.log("searching if/else: " + this.id)
-//         if (this.id === id) {
-//             return this;
-//         }
+        return null;
+    }
+}
 
-//         let found = this.conditionalBlock.find(id);
-//         if (found !== null) {
-//             return found;
-//         }
-//         found = this.trueProgramBlock.find(id);
-//         if (found !== null) {
-//             return found;
-//         }
-//         found = this.falseProgramBlock.find(id);
-//         if (found !== null) {
-//             return found;
-//         }
+class WhileBlock extends Block {
+    constructor() {
+        super();
+        this.conditionalBlock = new BlankConditionalBlock(this.id);
+        this.programBlock = new BlankProgramBlock(this.id);
+    }
 
-//         return null;
-//     }
-// }
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("class", `block if-block`);
+        html.textContent = "WHILE  "
+        html.appendChild(this.conditionalBlock.makeHtml())
+        html.appendChild(this.programBlock.makeHtml())
+        html.setAttribute("draggable", 'true');
+        let blockId = this.id;
+        html.addEventListener("dragstart", function (event) {
+            startDrag(event, "solution", blockId)
+        });
+        return this.addCommonHtml(html);
+    }
+
+    run() {
+        console.log("running  while: " + this.id);
+        if (this.conditionalBlock.run()) {
+            for (let i = 0; i < 6; i++) {
+                this.programBlock.run();
+            }
+        }
+    }
+
+    find(id) {
+        // console.log("searching if: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+
+        let found = this.conditionalBlock.find(id);
+        if (found !== null) {
+            return found;
+        }
+        found = this.programBlock.find(id);
+        if (found !== null) {
+            return found;
+        }
+
+        return null;
+    }
+}
 
 class TrueConditional extends Block {
     makeHtml() {
@@ -272,7 +322,7 @@ class FalseConditional extends Block {
     makeHtml() {
         let html = document.createElement("span");
         html.setAttribute("class", `block conditional-block`);
-        html.textContent = "TRUE"
+        html.textContent = "FALSE"
         return this.addCommonHtml(html);
     }
 
@@ -317,10 +367,9 @@ class BlankConditionalBlock extends Block {
 }
 
 class BlankProgramBlock extends Block {
-    constructor(parentID, left = true) {
+    constructor(parentID) {
         super();
         this.parentID = parentID;
-        this.left = left;
     }
     makeHtml() {
         let html = document.createElement("div");
@@ -354,7 +403,6 @@ class BlankProgramBlock extends Block {
 //         let html = document.createElement("div");
 //         html.setAttribute("data-block-id", this.id);
 //         html.setAttribute("class", `block function-def-block`)
-//         html.setAttribute("parent-id", this.parentID);
 //         html.textContent = "NEW FUNCTION " + this.funcName
 //         html.appendChild(this.programBlock.makeHtml())
 //         return html;
@@ -387,7 +435,6 @@ class BlankProgramBlock extends Block {
 //         let html = document.createElement("div")
 //         html.setAttribute("data-block-id", this.id);
 //         html.setAttribute("class", `block function-call-block`)
-//         html.setAttribute("parent-id", this.parentID);
 //         html.textContent = "EXECUTE FUNCTION " + this.funcName
 //         return html;
 //     }
@@ -405,15 +452,10 @@ class BlankProgramBlock extends Block {
 // }
 
 class MoveForward extends Block {
-    constructor() {
-        super();
-    }
-
     makeHtml() {
         let html = document.createElement("div");
         html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block move-block`);
-        html.setAttribute("parent-id", this.parentID);
         html.textContent = "MOVE FORWARD";
         html.setAttribute("draggable", 'true');
         let blockId = this.id;
@@ -438,138 +480,89 @@ class MoveForward extends Block {
 }
 
 
-// class MoveBlock extends Block {
+class MoveBackward extends Block {
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block move-block`);
+        html.textContent = "MOVE BACKWARD";
+        html.setAttribute("draggable", 'true');
+        let blockId = this.id;
+        html.addEventListener("dragstart", function (event) {
+            startDrag(event, "solution", blockId)
+        });
+        return html;
+    }
 
-//     constructor(direction) {
-//         super();
-//         this.direction = direction;
-//     }
+    run() {
+        console.log("running move backward: " + this.id);
+        control(input.MOVE_BACKWARD);
+    }
 
-//     makeHtml() {
-//         let html = document.createElement("div");
-//         html.setAttribute("data-block-id", this.id);
-//         html.setAttribute("class", `block move-block`);
-//         html.setAttribute("parent-id", this.parentID);
-//         switch (this.direction) {
-//             case input.MOVE_LEFT:
-//                 html.textContent = "MOVE LEFT";
-//                 break;
-//             case input.MOVE_RIGHT:
-//                 html.textContent = "MOVE RIGHT";
-//                 break;
-//             case input.MOVE_BACKWARD:
-//                 html.textContent = "MOVE BACKWARD";
-//                 break;
-//             default:
-//                 html.textContent = "MOVE FORWARD";
-//                 break;
-//         }
+    find(id) {
+        // console.log("searching move backward: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
 
-//         return html;
-//     }
+class MoveLeft extends Block {
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block move-block`);
+        html.textContent = "MOVE LEFT";
+        html.setAttribute("draggable", 'true');
+        let blockId = this.id;
+        html.addEventListener("dragstart", function (event) {
+            startDrag(event, "solution", blockId)
+        });
+        return html;
+    }
 
-//     run() {
-//         switch (this.direction) {
-//             case input.MOVE_LEFT:
-//                 console.log("running move left: " + this.id);
-//                 control(input.MOVE_LEFT);
-//                 break;
-//             case input.MOVE_RIGHT:
-//                 console.log("running move right: " + this.id);
-//                 control(input.MOVE_RIGHT);
-//                 break;
-//             case input.MOVE_BACKWARD:
-//                 console.log("running move backward: " + this.id);
-//                 control(input.MOVE_BACKWARD);
-//                 break;
-//             default:
-//                 console.log("running move forward: " + this.id);
-//                 control(input.MOVE_FORWARD);
-//                 break;
-//         }
-//     }
+    run() {
+        console.log("running move left: " + this.id);
+        control(input.MOVE_LEFT);
+    }
 
-//     find(id) {
-//         // console.log("searching move fwd: " + this.id)
-//         if (this.id === id) {
-//             return this;
-//         }
-//         return null;
-//     }
-// }
+    find(id) {
+        // console.log("searching move left: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
 
+class MoveRight extends Block {
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block move-block`);
+        html.textContent = "MOVE RIGHT";
+        html.setAttribute("draggable", 'true');
+        let blockId = this.id;
+        html.addEventListener("dragstart", function (event) {
+            startDrag(event, "solution", blockId)
+        });
+        return html;
+    }
 
-// class MoveBackward extends Block {
-//     makeHtml() {
-//         let html = document.createElement("div");
-//                 html.setAttribute("data-block-id", this.id);;
-//         html.setAttribute("class", `block move-block`);
-//         html.setAttribute("parent-id", this.parentID);
-//         html.textContent = "MOVE BACKWARD"
-//         return html;
-//     }
+    run() {
+        console.log("running move right: " + this.id);
+        control(input.MOVE_RIGHT);
+    }
 
-//     run() {
-//         console.log("running move backward: " + this.id);
-//         control(input.MOVE_BACKWARD);
-//     }
-
-//     find(id) {
-//         // console.log("searching move backward: " + this.id)
-//         if (this.id === id) {
-//             return this;
-//         }
-//         return null;
-//     }
-// }
-
-// class MoveLeft extends Block {
-//     makeHtml() {
-//         let html = document.createElement("div");
-//                 html.setAttribute("data-block-id", this.id);;
-//         html.setAttribute("class", `block move-block`);
-//         html.setAttribute("parent-id", this.parentID);
-//         html.textContent = "MOVE LEFT"
-//         return html;
-//     }
-
-//     run() {
-//         console.log("running move left: " + this.id);
-//         control(input.MOVE_LEFT);
-//     }
-
-//     find(id) {
-//         // console.log("searching move left: " + this.id)
-//         if (this.id === id) {
-//             return this;
-//         }
-//         return null;
-//     }
-// }
-
-// class MoveRight extends Block {
-//     makeHtml() {
-//         let html = document.createElement("div");
-//                 html.setAttribute("data-block-id", this.id);;
-//         html.setAttribute("class", `block move-block`);
-//         html.setAttribute("parent-id", this.parentID);
-//         html.textContent = "MOVE RIGHT"
-//         return html;
-//     }
-
-//     run() {
-//         console.log("running move right: " + this.id);
-//         control(input.MOVE_RIGHT);
-//     }
-
-//     find(id) {
-//         // console.log("searching move right: " + this.id)
-//         if (this.id === id) {
-//             return this;
-//         }
-//         return null;
-//     }
-// }
+    find(id) {
+        // console.log("searching move right: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
 
 function blockIsProgramBlock(block) {
     return block instanceof ProgramBlock;
@@ -580,8 +573,7 @@ function blockIsConditional(block) {
 }
 
 function blockAcceptsConditional(block) {
-    // return block instanceof IfBlock || block instanceof IfElseBlock;
-    return block instanceof IfBlock;
+    return block instanceof IfBlock || block instanceof IfElseBlock || block instanceof WhileBlock;
 }
 
 function addToProgramBlock(id, block) {
@@ -595,17 +587,26 @@ function addToProgramBlock(id, block) {
         return 0;
     }
     if (prevBlock.parentID === -1) {//adding on line 1
-        block.setParent(1);
+        block.setParent(main.id);
         main.blocks.unshift(block);
         updateHtmlView();
         return 1;
     }
     let parent = main.find(prevBlock.parentID);
-
     if (prevBlock instanceof BlankProgramBlock) {
-        parent.programBlock = new ProgramBlock();
-        parent.programBlock.setParent(prevBlock.parentID);
-        parent.programBlock.addBlock(block);
+        if (parent.parentID === -1) {//restarting after solutions reset
+            parent.blocks.pop();
+            parent.addBlock(block);
+        } else if (parent instanceof IfElseBlock) {
+            let pos = parent.programBlocks.indexOf(prevBlock);
+            parent.programBlocks[pos] = new ProgramBlock();
+            parent.programBlocks[pos].setParent(prevBlock.parentID);
+            parent.programBlocks[pos].addBlock(block);
+        } else {
+            parent.programBlock = new ProgramBlock();
+            parent.programBlock.setParent(prevBlock.parentID);
+            parent.programBlock.addBlock(block);
+        }
     } else {
         let pos = parent.blocks.indexOf(prevBlock);
         block.setParent(prevBlock.parentID);
@@ -640,7 +641,6 @@ function removeFromProgBlock(id) {
     }
     let progBlock = main.find(block.parentID);
     if (!blockIsProgramBlock(progBlock)) {
-        console.log(progBlock)
         console.log("Logic error from method 'removeFromProgBlock' - block parent ID not initialized correctly.")
         return 0;
     }
@@ -664,12 +664,17 @@ function tempAddMoveForward() {
 // All code-blocks the user has access to
 const toolbox_tools = {
     "IF_BLOCK": IfBlock,
+    "IF_ELSE_BLOCK": IfElseBlock,
+    "WHILE": WhileBlock,
     "TRUE": TrueConditional,
     "FALSE": FalseConditional,
     "MOVE_FORWARD": MoveForward,
+    "MOVE_BACKWARD": MoveBackward,
+    "MOVE_LEFT": MoveLeft,
+    "MOVE_RIGHT": MoveRight,
 }
 
-function startDrag(event, from, id) {    
+function startDrag(event, from, id) {
     event.dataTransfer.setData("data", JSON.stringify({ "from": from, "id": id }));
 }
 
