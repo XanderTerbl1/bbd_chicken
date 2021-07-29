@@ -2,6 +2,7 @@
 const WIDTH = 40;
 const INCREMENT_SPEED = 0.025;
 const TOTAL_LEVELS = 5;
+const resetEvent = new Event('reset');
 
 //Renderer
 var canvas = document.getElementById("mywebgl");
@@ -182,6 +183,8 @@ function initObjects() {
         chicken.rotation.y = Math.PI;
         scene.add(chicken);
         document.getElementById("level").style.visibility = "hidden";
+
+        document.dispatchEvent(resetEvent);
     }
     else
         document.getElementById("level").style.visibility = "visible";
@@ -203,6 +206,8 @@ function initObjects() {
         if (lives > 0 && !justFinished) { }
         else
             justFinished = false;
+
+        document.dispatchEvent(resetEvent);
     }
     else {
         // yellow cars slow
