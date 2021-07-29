@@ -400,28 +400,10 @@ class BlankProgramBlock extends Block {
 // }
 
 class MoveForward extends Block {
-    constructor() {
-        super();
-    }
-
     makeHtml() {
         let html = document.createElement("div");
         html.setAttribute("data-block-id", this.id);
         html.setAttribute("class", `block move-block`);
-        switch (this.direction) {
-            case input.MOVE_LEFT:
-                html.textContent = "MOVE LEFT";
-                break;
-            case input.MOVE_RIGHT:
-                html.textContent = "MOVE RIGHT";
-                break;
-            case input.MOVE_BACKWARD:
-                html.textContent = "MOVE BACKWARD";
-                break;
-            default:
-                html.textContent = "MOVE FORWARD";
-                break;
-        }
         html.textContent = "MOVE FORWARD";
         html.setAttribute("draggable", 'true');
         let blockId = this.id;
@@ -446,134 +428,89 @@ class MoveForward extends Block {
 }
 
 
-// class MoveBlock extends Block {
+class MoveBackward extends Block {
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block move-block`);
+        html.textContent = "MOVE BACKWARD";
+        html.setAttribute("draggable", 'true');
+        let blockId = this.id;
+        html.addEventListener("dragstart", function (event) {
+            startDrag(event, "solution", blockId)
+        });
+        return html;
+    }
 
-//     constructor(direction) {
-//         super();
-//         this.direction = direction;
-//     }
+    run() {
+        console.log("running move backward: " + this.id);
+        control(input.MOVE_BACKWARD);
+    }
 
-//     makeHtml() {
-//         let html = document.createElement("div");
-//         html.setAttribute("data-block-id", this.id);
-//         html.setAttribute("class", `block move-block`);
-//         switch (this.direction) {
-//             case input.MOVE_LEFT:
-//                 html.textContent = "MOVE LEFT";
-//                 break;
-//             case input.MOVE_RIGHT:
-//                 html.textContent = "MOVE RIGHT";
-//                 break;
-//             case input.MOVE_BACKWARD:
-//                 html.textContent = "MOVE BACKWARD";
-//                 break;
-//             default:
-//                 html.textContent = "MOVE FORWARD";
-//                 break;
-//         }
+    find(id) {
+        // console.log("searching move backward: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
 
-//         return html;
-//     }
+class MoveLeft extends Block {
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block move-block`);
+        html.textContent = "MOVE LEFT";
+        html.setAttribute("draggable", 'true');
+        let blockId = this.id;
+        html.addEventListener("dragstart", function (event) {
+            startDrag(event, "solution", blockId)
+        });
+        return html;
+    }
 
-//     run() {
-//         switch (this.direction) {
-//             case input.MOVE_LEFT:
-//                 console.log("running move left: " + this.id);
-//                 control(input.MOVE_LEFT);
-//                 break;
-//             case input.MOVE_RIGHT:
-//                 console.log("running move right: " + this.id);
-//                 control(input.MOVE_RIGHT);
-//                 break;
-//             case input.MOVE_BACKWARD:
-//                 console.log("running move backward: " + this.id);
-//                 control(input.MOVE_BACKWARD);
-//                 break;
-//             default:
-//                 console.log("running move forward: " + this.id);
-//                 control(input.MOVE_FORWARD);
-//                 break;
-//         }
-//     }
+    run() {
+        console.log("running move left: " + this.id);
+        control(input.MOVE_LEFT);
+    }
 
-//     find(id) {
-//         // console.log("searching move fwd: " + this.id)
-//         if (this.id === id) {
-//             return this;
-//         }
-//         return null;
-//     }
-// }
+    find(id) {
+        // console.log("searching move left: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
 
+class MoveRight extends Block {
+    makeHtml() {
+        let html = document.createElement("div");
+        html.setAttribute("data-block-id", this.id);
+        html.setAttribute("class", `block move-block`);
+        html.textContent = "MOVE RIGHT";
+        html.setAttribute("draggable", 'true');
+        let blockId = this.id;
+        html.addEventListener("dragstart", function (event) {
+            startDrag(event, "solution", blockId)
+        });
+        return html;
+    }
 
-// class MoveBackward extends Block {
-//     makeHtml() {
-//         let html = document.createElement("div");
-//                 html.setAttribute("data-block-id", this.id);;
-//         html.setAttribute("class", `block move-block`);
-//         html.textContent = "MOVE BACKWARD"
-//         return html;
-//     }
+    run() {
+        console.log("running move right: " + this.id);
+        control(input.MOVE_RIGHT);
+    }
 
-//     run() {
-//         console.log("running move backward: " + this.id);
-//         control(input.MOVE_BACKWARD);
-//     }
-
-//     find(id) {
-//         // console.log("searching move backward: " + this.id)
-//         if (this.id === id) {
-//             return this;
-//         }
-//         return null;
-//     }
-// }
-
-// class MoveLeft extends Block {
-//     makeHtml() {
-//         let html = document.createElement("div");
-//                 html.setAttribute("data-block-id", this.id);;
-//         html.setAttribute("class", `block move-block`);
-//         html.textContent = "MOVE LEFT"
-//         return html;
-//     }
-
-//     run() {
-//         console.log("running move left: " + this.id);
-//         control(input.MOVE_LEFT);
-//     }
-
-//     find(id) {
-//         // console.log("searching move left: " + this.id)
-//         if (this.id === id) {
-//             return this;
-//         }
-//         return null;
-//     }
-// }
-
-// class MoveRight extends Block {
-//     makeHtml() {
-//         let html = document.createElement("div");
-//                 html.setAttribute("data-block-id", this.id);;
-//         html.setAttribute("class", `block move-block`);
-//         html.textContent = "MOVE RIGHT"
-//         return html;
-//     }
-
-//     run() {
-//         console.log("running move right: " + this.id);
-//         control(input.MOVE_RIGHT);
-//     }
-
-//     find(id) {
-//         // console.log("searching move right: " + this.id)
-//         if (this.id === id) {
-//             return this;
-//         }
-//         return null;
-//     }
-// }
+    find(id) {
+        // console.log("searching move right: " + this.id)
+        if (this.id === id) {
+            return this;
+        }
+        return null;
+    }
+}
 
 function blockIsProgramBlock(block) {
     return block instanceof ProgramBlock;
@@ -672,6 +609,9 @@ const toolbox_tools = {
     "TRUE": TrueConditional,
     "FALSE": FalseConditional,
     "MOVE_FORWARD": MoveForward,
+    "MOVE_BACKWARD": MoveBackward,
+    "MOVE_LEFT": MoveLeft,
+    "MOVE_RIGHT": MoveRight,
 }
 
 function startDrag(event, from, id) {    

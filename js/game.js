@@ -5,7 +5,7 @@ const TOTAL_LEVELS = 2;
 const MAX_LIVES = 1;
 const resetEvent = new Event('reset');
 const newBestScore = new Event('newScore');
-localStorage.setItem("score") = 0;
+localStorage.setItem("score", 0);
 
 //Renderer
 var canvas = document.getElementById("mywebgl");
@@ -508,7 +508,7 @@ function landedOnFinish() {
             console.log(currScore);
             if(currScore >= score || currScore == 0)
             {
-                localStorage.setItem("score") = score;
+                localStorage.setItem("score", score);
                 document.dispatchEvent(newScore);
             }
         }
