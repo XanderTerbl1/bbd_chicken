@@ -150,7 +150,7 @@ var score = 0, tempScore = 0;
 
 function resetGame()
 {
-    gameOver = false;
+    gameOver = true;
 }
 
 // Initializes on new level reset after death
