@@ -8,6 +8,11 @@
   cursor: pointer;
 }
 
+.program-block{
+  min-width: 100px;
+  min-height: 100px;
+}
+
 .btn-reset{
   background-color: darkgoldenrod;
   color: white;
@@ -31,6 +36,7 @@
 
   .block {
     padding: 5px 10px;
+    cursor: move;
   }
 
   .if-block>.program-block {

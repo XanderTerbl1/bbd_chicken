@@ -1,7 +1,11 @@
 //Const level params
 const WIDTH = 40;
 const INCREMENT_SPEED = 0.025;
-const TOTAL_LEVELS = 5;
+const TOTAL_LEVELS = 2;
+const MAX_LIVES = 1;
+const resetEvent = new Event('reset');
+const newBestScore = new Event('newScore');
+localStorage.setItem("score") = 0;
 
 //Renderer
 var canvas = document.getElementById("mywebgl");
@@ -137,7 +141,7 @@ var gameOver = false;
 var startGame = false;
 var gameCompleted = false;
 var run = 0;
-var lives = 3;
+var lives = MAX_LIVES;
 var level = 1;
 var levelsCompleted = 0;
 var finishNum = 0;
@@ -150,7 +154,7 @@ function initObjects() {
     hit = false;
     if (gameOver) {
         run = 0;
-        lives = 3;
+        lives = MAX_LIVES;
         level = 1;
         levelsCompleted = 0;
         score = 0;
@@ -166,9 +170,10 @@ function initObjects() {
 
     if (gameCompleted) {
         run = 0;
-        lives = 3;
+        lives = MAX_LIVES;
         level = 1;
         levelsCompleted = 0;
+
         score = 0;
         for (var i = 0; i < placeHolders.length; i++)
             scene.remove(placeHolders[i]);
@@ -182,6 +187,8 @@ function initObjects() {
         chicken.rotation.y = Math.PI;
         scene.add(chicken);
         document.getElementById("level").style.visibility = "hidden";
+
+        document.dispatchEvent(resetEvent);
     }
     else
         document.getElementById("level").style.visibility = "visible";
@@ -203,6 +210,8 @@ function initObjects() {
         if (lives > 0 && !justFinished) { }
         else
             justFinished = false;
+
+        document.dispatchEvent(resetEvent);
     }
     else {
         // yellow cars slow
@@ -477,7 +486,7 @@ function landedOnFinish() {
         score += tempScore;
 
         if (level == TOTAL_LEVELS) {
-            document.getElementById("levelCompleteText").innerHTML = "GAME COMPLETED!"
+            document.getElementById("levelCompleteText").innerHTML = "GAME COMPLETED!";
             document.getElementById("levelCompleteText").style.visibility = "visible";
             document.getElementById("levelComplete").style.visibility = "visible";
             setTimeout(function () {
@@ -493,13 +502,21 @@ function landedOnFinish() {
             }, 2000);
             gameCompleted = true;
             startGame = false;
-            console.log("game complete");
+
+            //Handle best score
+            var currScore = localStorage.getItem("score");
+            console.log(currScore);
+            if(currScore >= score || currScore == 0)
+            {
+                localStorage.setItem("score") = score;
+                document.dispatchEvent(newScore);
+            }
         }
         // Otherwise, just show that user has completed level.
         else {
             setTimeout(function () {
                 document.getElementById("levelCompleteText").style.visibility = "visible";
-                document.getElementById("levelCompleteText").innerHTML = "LEVEL " + level + " COMPLETED!"
+                document.getElementById("levelCompleteText").innerHTML = "LEVEL " + level + " COMPLETED!";
                 document.getElementById("levelComplete").style.visibility = "visible";
 
             }, 1000);
