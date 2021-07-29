@@ -1,7 +1,7 @@
 //Const level params
 const WIDTH = 40;
 const INCREMENT_SPEED = 0.025;
-const TOTAL_LEVELS = 2;
+const TOTAL_LEVELS = 5;
 const MAX_LIVES = 1;
 const resetEvent = new Event("resetEvent");
 const newScore = new Event("newScore");
