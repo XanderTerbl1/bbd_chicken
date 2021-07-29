@@ -438,6 +438,11 @@ function findClosestDirec()
     return -1;
 }
 
+function getLevel()
+{
+    return level;
+}
+
 function findClosestDist()
 {
     return findClosest(true);
