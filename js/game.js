@@ -148,6 +148,11 @@ var justFinished = false;
 var placeHolders = [];
 var score = 0, tempScore = 0;
 
+function resetGame()
+{
+    gameOver = false;
+}
+
 // Initializes on new level reset after death
 function initObjects() {
     hit = false;
