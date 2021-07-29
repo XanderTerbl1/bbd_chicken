@@ -33,6 +33,7 @@ window.addEventListener('load', function () {
 
 // Runs the solution recursivley
 function runSolution() {
+    resetLevel();
     control(input.START_GAME);
     main.run();
 }
