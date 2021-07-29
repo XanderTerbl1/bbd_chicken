@@ -736,6 +736,10 @@ function removeFromProgBlock(id) {
         console.log("Logic error from method 'removeFromProgBlock' - block parent ID not initialized correctly.")
         return 0;
     }
+    if (main.blocks.length === 1) {//remove only block
+        resetSolution();
+        return 1;
+    }
     if (progBlock.blocks.length === 1) {
         let parent = main.find(progBlock.parentID);
         parent.programBlock = new BlankProgramBlock(progBlock.parentID);
