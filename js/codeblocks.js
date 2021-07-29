@@ -80,6 +80,10 @@ function onDrop(event) {
     // add other source-destination pairs
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 class Block {
     constructor() {
         this.id = getBlockId();
@@ -95,9 +99,12 @@ class Block {
     }
 
     // virtual functions               
-    run() { }
+    async run() { 
+        await sleep(500);        
+    }
     makeHtml() { }
 }
+
 
 class ProgramBlock extends Block {
     constructor() {
@@ -105,11 +112,12 @@ class ProgramBlock extends Block {
         this.blocks = []
     }
 
-    run() {
+    async run() {
+        await super.run();
         console.log("running  program: " + this.id);
-        this.blocks.forEach(b => {
-            b.run();
-        });
+        for (let i = 0; i < this.blocks.length; i++) {
+            await this.blocks[i].run();
+        }
     }
 
     find(id) {
@@ -268,12 +276,10 @@ class WhileBlock extends Block {
         return this.addCommonHtml(html);
     }
 
-    run() {
+    async run() {
         console.log("running  while: " + this.id);
-        if (this.conditionalBlock.run()) {
-            for (let i = 0; i < 6; i++) {
-                this.programBlock.run();
-            }
+        while (this.conditionalBlock.run()) {
+            await this.programBlock.run();
         }
     }
 
@@ -451,6 +457,7 @@ class BlankProgramBlock extends Block {
 //     }
 // }
 
+
 class MoveForward extends Block {
     makeHtml() {
         let html = document.createElement("div");
@@ -465,8 +472,9 @@ class MoveForward extends Block {
         return html;
     }
 
-    run() {
-        console.log("running move forward: " + this.id);
+
+    async run() {
+        await super.run();
         control(input.MOVE_FORWARD);
     }
 
@@ -720,10 +728,3 @@ function dragSolutionToSolution(solution_obj, solution_dest) {
     // remove from soluto
 }
 
-// TODO
-// Add drop on toolbox -> drops are remove/
-// make everything draggable that requires it
-// Add allowDrop and ondrop where needed (program block and ?)
-
-
-// Initialisations
