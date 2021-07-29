@@ -161,6 +161,8 @@ function resetLevel()
     document.dispatchEvent(resetEvent);
     tempScore = 0;
     score = 0;
+    run = 0;
+    level = 1;
 }
 
 // Initializes on new level reset after death
