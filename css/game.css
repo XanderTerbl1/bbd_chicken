@@ -15,7 +15,7 @@ body { margin: 0; overflow-x: hidden; overflow-y: hidden; background-color: blac
 				position: absolute;
 				z-index: 1;
 				left: 50px;
-				top: 80px;
+				top: 60px;
 				width:100px;
 				height:20px;
 				color: white;
@@ -37,7 +37,7 @@ body { margin: 0; overflow-x: hidden; overflow-y: hidden; background-color: blac
 				position: absolute;
 				z-index: 1;
 				left: 50px;
-				top: 200px;
+				bottom: 120px;
 				width:300px;
 				height:100px;
 				width: 90%;
