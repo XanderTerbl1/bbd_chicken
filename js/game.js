@@ -1,7 +1,7 @@
 //Const level params
 const WIDTH = 40;
 const INCREMENT_SPEED = 0.020;
-const TOTAL_LEVELS = 5;
+const TOTAL_LEVELS = 2;
 const MAX_LIVES = 1;
 const resetEvent = new Event("resetEvent");
 const newScore = new Event("newScore");
@@ -36,8 +36,7 @@ scene.add(light2);
 var groundBase = addGrassStrip(0, 0, -10); //Start
 var groundEndBase = addGrassStrip(0, 12, -10); //End
 var topBorder = groundEndBase.position.y + 2;
-function addGrassStrip(x, y, z)
-{
+function addGrassStrip(x, y, z) {
     var baseTexture = new THREE.TextureLoader().load("images/grass.jpg");
     var basePlane = new THREE.PlaneBufferGeometry(40, 2);
     var baseMat = new THREE.MeshPhongMaterial({ color: 0x00FF00, specular: 0x050505, map: baseTexture });
@@ -53,9 +52,8 @@ function addGrassStrip(x, y, z)
 
 //Add road
 var groundRoad = addRoad(0, 6, -10)
-var border = WIDTH/2;
-function addRoad(x, y, z)
-{
+var border = WIDTH / 2;
+function addRoad(x, y, z) {
     var roadTexture = new THREE.TextureLoader().load("images/road.png");
     roadTexture.wrapS = THREE.RepeatWrapping;
     roadTexture.wrapT = THREE.RepeatWrapping;
@@ -75,8 +73,7 @@ function addRoad(x, y, z)
 //Add bounding walls
 addEdgeWall(30, 11, 0); //right
 addEdgeWall(-30, 11, 0); //left
-function addEdgeWall(x, y, z)
-{
+function addEdgeWall(x, y, z) {
     var wallPlane = new THREE.BoxGeometry(20, 22, 20);
     var mat = new THREE.MeshPhongMaterial({ color: 0x000000, specular: 0x050505 });
     var wall = new THREE.Mesh(wallPlane, mat);
@@ -111,8 +108,7 @@ var greyCarTexture = new THREE.TextureLoader().load("images/truck.jpg");
 // chicken
 var chicken;
 loadChicken(0, 0, -10);
-function loadChicken(x, y, z)
-{
+function loadChicken(x, y, z) {
     var loader = new THREE.OBJLoader();
 
     loader.load('models/Chicken1.obj',
@@ -148,8 +144,8 @@ var justFinished = false;
 var placeHolders = [];
 var score = 0, tempScore = 0;
 
-function resetLevel()
-{
+
+function resetLevel() {
     scene.remove(chicken);
     chicken.position.x = 0;
     chicken.position.y = 0;
@@ -165,11 +161,11 @@ function resetLevel()
     level = 1;
 }
 
+
 // Initializes on new level reset after death
 function initObjects() {
     hit = false;
-    if (gameOver)
-    {
+    if (gameOver) {
         run = 0;
         lives = MAX_LIVES;
         level = 1;
@@ -187,8 +183,7 @@ function initObjects() {
 
     document.getElementById("score").style.visibility = "visible";
 
-    if (gameCompleted)
-    {
+    if (gameCompleted) {
         run = 0;
         lives = MAX_LIVES;
         level = 1;
@@ -197,8 +192,7 @@ function initObjects() {
         //Handle best score
         var currScore = localStorage.getItem("score");
         localStorage.clear("score");
-        if(currScore >= score || currScore == 0)
-        {
+        if (currScore >= score || currScore == 0) {
             localStorage.setItem("score", score);
             document.dispatchEvent(newScore);
         }
@@ -231,8 +225,7 @@ function initObjects() {
     document.getElementById("levelNum").innerHTML = "LEVEL " + level;
     document.getElementById("score").innerHTML = "SCORE: " + score;
 
-    if(run != 0)
-    {
+    if (run != 0) {
         //Reset
         scene.remove(chicken);
         chicken.position.x = 0;
@@ -247,8 +240,7 @@ function initObjects() {
 
         document.dispatchEvent(resetEvent);
     }
-    else
-    {
+    else {
         // yellow cars slow
         for (var y = 0; y < yellowCars.length; y++)
             scene.remove(yellowCars[y]);
@@ -256,7 +248,7 @@ function initObjects() {
         for (var y = 0; y < 5; y++) {
             var carMat = new THREE.MeshPhongMaterial({ specular: 0x050505, map: yellowCarTexture });
             var car = new THREE.Mesh(geometry, carMat);
-            car.position.x = WIDTH/2 + 8 * y;
+            car.position.x = WIDTH / 2 + 8 * y;
             car.position.y = 2;
             car.position.z = -9.5;
             car.castShadow = true;
@@ -288,7 +280,7 @@ function initObjects() {
         for (var p = 0; p < 4; p++) {
             var carMat = new THREE.MeshPhongMaterial({ specular: 0x050505, map: pinkCarTexture });
             var car = new THREE.Mesh(geometry, carMat);
-            car.position.x = WIDTH/2 + 8 * p;
+            car.position.x = WIDTH / 2 + 8 * p;
             car.position.y = 6;
             car.position.z = -9.5;
             car.castShadow = true;
@@ -304,7 +296,7 @@ function initObjects() {
         for (var gf = 0; gf < 1; gf++) {
             var carMat = new THREE.MeshPhongMaterial({ specular: 0x050505, map: greenFastCarTexture });
             var car = new THREE.Mesh(geometry, carMat);
-            car.position.x = -WIDTH/2 - 15 * gf;
+            car.position.x = -WIDTH / 2 - 15 * gf;
             car.position.y = 8;
             car.position.z = -9.5;
             car.castShadow = true;
@@ -321,7 +313,7 @@ function initObjects() {
             var carMat = new THREE.MeshPhongMaterial({ specular: 0x050505, map: greyCarTexture });
             var carGeo = new THREE.BoxGeometry(3, 1, 1);
             var car = new THREE.Mesh(carGeo, carMat);
-            car.position.x = WIDTH/2 + 15 * gt;
+            car.position.x = WIDTH / 2 + 15 * gt;
             car.position.y = 10;
             car.position.z = -9.5;
             car.castShadow = true;
@@ -356,8 +348,7 @@ document.addEventListener('keyup', function () {
 }, false);
 
 // chicken movement
-function handleKeys() 
-{
+function handleKeys() {
     if (event.keyCode == 32)
         handleKeysBlock(0);
     else if (event.keyCode == 39)
@@ -372,8 +363,7 @@ function handleKeys()
 
 
 var pause = false;
-function handleKeysBlock(keyIn)
-{
+function handleKeysBlock(keyIn) {
     if (keyIn == 0) { // Press Space to begin game!
         initObjects();
         //document.getElementById("start").style.visibility = "hidden";
@@ -431,92 +421,76 @@ function hitsVehicle(vehicle, isTruck) {
     }
     return false;
 }
-function findDist(x1, x2, y1, y2)
-{
-    return Math.sqrt(Math.pow((x1-x2), 2) +Math.pow((y1-y2), 2));
+function findDist(x1, x2, y1, y2) {
+    return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
 }
 
-function findClosestDirec()
-{
+function findClosestDirec() {
     var closestCar = findClosest(false);
-    if(closestCar != null)
-    {
-        if(closestCar.position.y > chicken.position.y)
+    if (closestCar != null) {
+        if (closestCar.position.y > chicken.position.y)
             return 3;
-        else if(closestCar.position.y < chicken.position.y)
+        else if (closestCar.position.y < chicken.position.y)
             return 4;
-        else if(closestCar.position.x > chicken.position.x)
+        else if (closestCar.position.x > chicken.position.x)
             return 1;
-        else if(closestCar.position.x < chicken.position.x)
+        else if (closestCar.position.x < chicken.position.x)
             return 2;
-        
+
     }
 
     return -1;
 }
 
-function getLevel()
-{
+function getLevel() {
     return level;
 }
 
-function findClosestDist()
-{
+function findClosestDist() {
     return findClosest(true);
 }
 
-function findClosest(distanceBool)
-{
+function findClosest(distanceBool) {
     var closest = Number.MAX_SAFE_INTEGER;
     var closestCar = null;
     //Cars
     //yellow cars
-    for (var y = 0; y < yellowCars.length; y++)
-    {
-        if (findDist(yellowCars[y].position.x, chicken.position.x, yellowCars[y].position.y, chicken.position.y) < closest)
-        {
+    for (var y = 0; y < yellowCars.length; y++) {
+        if (findDist(yellowCars[y].position.x, chicken.position.x, yellowCars[y].position.y, chicken.position.y) < closest) {
             closest = findDist(yellowCars[y].position.x, chicken.position.x, yellowCars[y].position.y, chicken.position.y);
             closestCar = yellowCars[y];
         }
     }
     //green cars
-    for (var gs = 0; gs < greenSlowCars.length; gs++)
-    {
-        if (findDist(greenSlowCars[gs].position.x, chicken.position.x, greenSlowCars[gs].position.y, chicken.position.y) < closest)
-        {
+    for (var gs = 0; gs < greenSlowCars.length; gs++) {
+        if (findDist(greenSlowCars[gs].position.x, chicken.position.x, greenSlowCars[gs].position.y, chicken.position.y) < closest) {
             closest = findDist(greenSlowCars[gs].position.x, chicken.position.x, greenSlowCars[gs].position.y, chicken.position.y);
             closestCar = greenSlowCars[gs];
         }
     }
     //pink cars
-    for (var p = 0; p < pinkCars.length; p++)
-    {
-        if (findDist(pinkCars[p].position.x, chicken.position.x, pinkCars[p].position.y, chicken.position.y) < closest)
-        {
+    for (var p = 0; p < pinkCars.length; p++) {
+        if (findDist(pinkCars[p].position.x, chicken.position.x, pinkCars[p].position.y, chicken.position.y) < closest) {
             closest = findDist(pinkCars[p].position.x, chicken.position.x, pinkCars[p].position.y, chicken.position.y);
             closestCar = pinkCars[p];
         }
     }
     //green cars
-    for (var gf = 0; gf < greenFastCars.length; gf++)
-    {
-        if (findDist(greenFastCars[gf].position.x, chicken.position.x, greenFastCars[gf].position.y, chicken.position.y) < closest)
-        {
+    for (var gf = 0; gf < greenFastCars.length; gf++) {
+        if (findDist(greenFastCars[gf].position.x, chicken.position.x, greenFastCars[gf].position.y, chicken.position.y) < closest) {
             closest = findDist(greenFastCars[gf].position.x, chicken.position.x, greenFastCars[gf].position.y, chicken.position.y);
             closestCar = greenFastCars[gf];
         }
     }
     //grey cars
-    for (var gt = 0; gt < greyCars.length; gt++) 
-    {
-        if (findDist(greyCars[gt].position.x, chicken.position.x, greyCars[gt].position.y, chicken.position.y) < closest)
-        {
+    for (var gt = 0; gt < greyCars.length; gt++) {
+        if (findDist(greyCars[gt].position.x, chicken.position.x, greyCars[gt].position.y, chicken.position.y) < closest) {
             closest = findDist(greyCars[gt].position.x, chicken.position.x, greyCars[gt].position.y, chicken.position.y);
             closestCar = greyCars[gt];
         }
     }
 
-    if(distanceBool)
+    if (distanceBool)
         return closest;
     return closestCar;
 }
@@ -632,7 +606,7 @@ function render() {
     }
     renderer.render(scene, camera);
 }
-setInterval(function(){requestAnimationFrame(render);}, 10);
+setInterval(function () { requestAnimationFrame(render); }, 20);
 
 function animatechickenDeath() {
     chicken.position.z -= 0.1;
@@ -642,10 +616,8 @@ function animateFinishSlot() {
     chicken.position.z -= 0.05;
 }
 
-function updateCars()
-{
-    if(pause == false)
-    {
+function updateCars() {
+    if (pause == false) {
         hit = false;
         //Cars
         //yellow cars

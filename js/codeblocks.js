@@ -271,7 +271,7 @@ class WhileBlock extends Block {
 
     makeHtml() {
         let html = document.createElement("div");
-        html.setAttribute("class", `block if-block`);
+        html.setAttribute("class", `block while-block`);
         html.textContent = "WHILE  "
         html.appendChild(this.conditionalBlock.makeHtml())
         html.appendChild(this.programBlock.makeHtml())
@@ -453,7 +453,7 @@ class ClosestDistanceBlock extends Block {
     run() {
         console.log("running closest distance conditional: " + this.id);
         let dist = findClosestDist();
-        return findClosestDist() <= 3.5;
+        return findClosestDist() <= 4.5;
     }
 
     find(id) {
@@ -832,6 +832,7 @@ class MoveWait extends Block {
 }
 
 function blockIsConditional(block) {
+    // console.log(block)
     return block.makeHtml().getAttribute("class") === "block conditional-block";
     // return block instanceof TrueConditional || block instanceof FalseConditional || 
     // block instanceof BlankConditionalBlock || block instanceof ClosestFrontBlock ||
@@ -932,7 +933,10 @@ function addDemoSolution() {
     updateConditionalBlock(whi.conditionalBlock.id, new TrueConditional());
     let ife1 = new IfElseBlock();
     addToProgramBlock(whi.programBlock.id, ife1);
-    updateConditionalBlock(ife1.id.)
+    updateConditionalBlock(ife1.conditionalBlock.id, new ClosestFrontBlock());
+    let ife2 = new IfElseBlock();
+    console.log(ife2.programBlocks[0], ife2)
+    addToProgramBlock(ife2.id, ife2);
 
 }
 
@@ -1018,3 +1022,20 @@ function dragSolutionToSolution(solution_obj, solution_dest_id) {
     }
 }
 
+function countResults(){
+    localStorage.clear("blocks");
+    localStorage.clear("conditional");
+    localStorage.clear("loops");
+
+    let blocks = document.querySelectorAll('.block:not(.program-block)').length;
+    let conditionals = document.querySelectorAll('.conditional-block').length;
+    let loops = document.querySelectorAll('.while-block').length;
+
+    localStorage.setItem("blocks", blocks);
+    localStorage.setItem("conditional",conditionals);
+    localStorage.setItem("loops", loops);
+
+    console.log("# blocks", blocks);
+    console.log("# cond", conditionals);
+    console.log("# loops", loops);
+}

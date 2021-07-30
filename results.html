@@ -1,59 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-      crossorigin="anonymous"
-    />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Results</title>
-    <style>
-      .table {
-        padding-top: 100px;
-        margin: auto;
-        max-width: 800px;
-      }
-    </style>
-  </head>
-  <body>
-    <h1 class="text-center p-5">Results</h1>
-    <table class="table">
-      <tbody>
-        <tr>
-          <th scope="row"># Score</th>
-          <td id="num_score">0</td>
-        </tr>
-        <tr>
-          <th># blocks</th>
-          <td id="num_blocks">0</td>
-        </tr>
-        <tr>
-          <th># conditional blocks</th>
-          <td id="num_cond">0</td>
-        </tr>
-        <tr>
-          <th># looping blocks</th>
-          <td id="num_loops">0</td>
-        </tr>
-      </tbody>
-    </table>
-    <script>
-      localStorage.clear("score");
-      localStorage.setItem("score", 0);
-      setInterval(() => {
-        document.getElementById("num_score").innerHTML =
-          localStorage.getItem("score");
-        document.getElementById("num_blocks").innerHTML =
-          localStorage.getItem("blocks");
-        document.getElementById("num_cond").innerHTML =
-          localStorage.getItem("conditional");
-        document.getElementById("num_loops").innerHTML =
-          localStorage.getItem("loops");
-      }, 500);
-    </script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Results</title>
+  <style>
+    .table {
+      padding-top: 100px;
+      margin: auto;
+      max-width: 800px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1 class="text-center pt-5 pb-2">Results</h1>
+  <h3 class="text-center pb-5" style="color: green;">Give this chicken a bursary!</h3>
+  <table class="table">
+    <tbody>
+      <tr>
+        <th scope="row"># Score</th>
+        <td id="num_score">0</td>
+      </tr>
+    </tbody>
+  </table>
+  <script>
+    localStorage.clear("score");
+    localStorage.setItem("score", 0);
+    setInterval(() => {
+      document.getElementById("num_score").innerHTML =
+        localStorage.getItem("score");      
+    }, 500);
+  </script>
+</body>
+
 </html>
