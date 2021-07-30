@@ -79,6 +79,11 @@ function onDrop(event) {
         dragSolutionToToolbox(data.id);
     }
 
+    if (data.from == "solution" && event.target.hasAttribute("data-block-id")){
+        console.log("dragging from toolbox to toolbox")
+        dragSolutionToSolution(data.id, event.target.getAttribute("data-block-id"));
+    }
+
     // add other source-destination pairs
 }
 
@@ -490,7 +495,8 @@ class LevelTwoConditionalBlock extends Block {
         return html;
     }
 
-    run() {
+    async run() {
+        await super.run();
         console.log("running level 2 conditional: " + this.id);
         return getLevel() === 2;
     }
@@ -725,7 +731,8 @@ class MoveBackward extends Block {
         return html;
     }
 
-    run() {
+    async run() {
+        await super.run();
         console.log("running move backward: " + this.id);
         control(input.MOVE_BACKWARD);
     }
@@ -753,8 +760,8 @@ class MoveLeft extends Block {
         return html;
     }
 
-    run() {
-        console.log("running move left: " + this.id);
+    async run() {
+        await super.run();
         control(input.MOVE_LEFT);
     }
 
@@ -781,7 +788,8 @@ class MoveRight extends Block {
         return html;
     }
 
-    run() {
+    async run() {
+        await super.run();
         console.log("running move right: " + this.id);
         control(input.MOVE_RIGHT);
     }
@@ -809,7 +817,8 @@ class MoveWait extends Block {
         return html;
     }
 
-    run() {
+    async run() {
+        await super.run();
         console.log("running waitt: " + this.id);
         control(input.WAIT);
     }
@@ -916,6 +925,16 @@ function removeFromProgBlock(id) {
     return 1;
 }
 
+function addDemoSolution() {
+    resetSolution();
+    let whi = new WhileBlock();
+    addToProgramBlock(main.id+1, whi);
+    updateConditionalBlock(whi.conditionalBlock.id, new TrueConditional());
+    let ife1 = new IfElseBlock();
+    addToProgramBlock(whi.programBlock.id, ife1);
+    updateConditionalBlock(ife1.id.)
+
+}
 
 function tempAddMoveForward() {
     main.addBlock(new MoveBlock(input.MOVE_FORWARD));
@@ -989,7 +1008,13 @@ function dragSolutionToToolbox(solution_block_id) {
     removeFromProgBlock(solution_block_id);
 }
 
-function dragSolutionToSolution(solution_obj, solution_dest) {
-    // remove from soluto
+function dragSolutionToSolution(solution_obj, solution_dest_id) {
+    let block = main.find(solution_obj)    
+    removeFromProgBlock(block.id)    
+    if (blockIsConditional(block)) {
+        updateConditionalBlock(parseInt(solution_dest_id), block);
+    } else {
+        addToProgramBlock(parseInt(solution_dest_id), block);
+    }
 }
 
